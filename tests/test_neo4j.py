@@ -1,5 +1,5 @@
 import pytest
-from neo4j_db import NEO4J_USERNAME, NEO4J_URL, NEO4J_PASSWORD
+from neo4j_db import NEO4J_PASSWORD, NEO4J_URL, NEO4J_USERNAME
 from neo4j_db.Neo4jDB import Neo4jDB
 
 

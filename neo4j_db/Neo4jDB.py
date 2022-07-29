@@ -1,7 +1,7 @@
 import logging
 
 from neo4j import GraphDatabase
-from neo4j.exceptions import ServiceUnavailable, TransactionError, AuthError
+from neo4j.exceptions import AuthError, ServiceUnavailable, TransactionError
 
 
 class Neo4jDB:
