@@ -1,0 +1,7 @@
+black
+flake8
+flask
+mypy
+neo4j-python-driver
+pytest
+python-dotenv
