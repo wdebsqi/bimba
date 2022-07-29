@@ -1,24 +1,28 @@
 import logging
-import os
 
-from dotenv import load_dotenv
 from neo4j import GraphDatabase
-from neo4j.exceptions import ServiceUnavailable, TransactionError
-
-# Loading environment variables from .env file
-load_dotenv()
-NEO4J_URL = os.getenv("NEO4J_URL")
-NEO4J_USERNAME = os.getenv("NEO4J_USERNAME")
-NEO4J_PASSWORD = os.getenv("NEO4J_PASSWORD")
+from neo4j.exceptions import AuthError, ServiceUnavailable, TransactionError
 
 
-class App:
+class Neo4jDB:
     def __init__(self, uri, user, password):
         self.driver = GraphDatabase.driver(uri, auth=(user, password))
 
     def close(self):
         # Don't forget to close the driver connection when you are finished with it
         self.driver.close()
+
+    def ping(self):
+        with self.driver.session(database="neo4j") as session:
+            try:
+                session.run("match (n) return n limit 1")
+                return True
+            except AuthError as ae:
+                logging.error("Auth error when pinging Neo4j DB: %s", ae.message)
+                return False
+            except Exception as e:
+                logging.error("Unidentified error when pinging Neo4j DB: %s", e.message)
+                return False
 
     def create_friendship(self, person1_name, person2_name):
         with self.driver.session(database="neo4j") as session:
@@ -105,19 +109,19 @@ class App:
             return False
 
 
-if __name__ == "__main__":
+# if __name__ == "__main__":
 
-    # Initializing the app
-    app = App(NEO4J_URL, NEO4J_USERNAME, NEO4J_PASSWORD)
+# Initializing the app
+# app = Neo4jApp(NEO4J_URL, NEO4J_USERNAME, NEO4J_PASSWORD)
+# print(app.ping())
+# Performing example operations to ensure the connection to Neo4j db
+# as well as the Python driver are working
+# ALICE = "Alice"
+# DAVID = "David"
+# friends_found = app.find_friends(ALICE, DAVID)
+# if len(friends_found) > 0:
+#     app.remove_friends(ALICE, DAVID)
 
-    # Performing example operations to ensure the connection to Neo4j db
-    # as well as the Python driver are working
-    ALICE = "Alice"
-    DAVID = "David"
-    friends_found = app.find_friends(ALICE, DAVID)
-    if len(friends_found) > 0:
-        app.remove_friends(ALICE, DAVID)
-
-    app.create_friendship(ALICE, DAVID)
-    app.find_person(ALICE)
-    app.close()
+# app.create_friendship(ALICE, DAVID)
+# app.find_person(ALICE)
+# app.close()
