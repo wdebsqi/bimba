@@ -30,7 +30,7 @@ jobs:
     - name: Install dependencies
       run: |
         conda config --add channels conda-forge
-        conda install --file requirements.yml --name base
+        conda env update -n base --file requirements.yml
     - name: Test with pytest
       run: |
         pytest
