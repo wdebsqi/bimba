@@ -1,0 +1,44 @@
+name: Build and test Python app on Pull Request
+
+env:
+  AZURE_WEBAPP_NAME: bimba
+  PYTHON_VERSION: '3.9'
+  
+on:
+  pull_request:
+    branches: [ "main" ]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Python version
+        uses: actions/setup-python@v3.0.0
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: 'pip'
+
+      - name: Create and start virtual environment
+        run: |
+          python -m venv venv
+          source venv/bin/activate
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+        
+      - name: Create .env file
+        run: |
+          touch .env
+          echo NEO4J_URL=${{ secrets.NEO4J_URL }} >> .env
+          echo NEO4J_USERNAME=${{ secrets.NEO4J_USERNAME }} >> .env
+          echo NEO4J_PASSWORD=${{ secrets.NEO4J_PASSWORD }} >> .env
+      
+      - name: Test with PyTest
+        run: |
+          pytest

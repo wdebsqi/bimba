@@ -1,9 +1,0 @@
-dependencies:
-  - python==3.10
-  - flake8
-  - mypy
-  - neo4j-python-driver
-  - python-dotenv
-  - black
-  - flask
-  - pytest
