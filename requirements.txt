@@ -2,6 +2,6 @@ black
 flake8
 flask
 mypy
-neo4j-python-driver
+neo4j
 pytest
 python-dotenv
