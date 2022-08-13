@@ -58,13 +58,21 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
 
-    steps:    
-      - name: Copy repository to VPS
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Pack repository to .tar file
+        run: |
+          mkdir ../build
+          cp -TR . ../build
+          tar -cvf deploy.tar ../build/
+        
+      - name: Copy .tar file to VPS
         uses: appleboy/scp-action@master
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.KEY }}
           passphrase: ${{ secrets.PASSPHRASE }}
-          source: "."
-          target: "~/bimba"
+          source: "deploy.tar"
+          target: "/home/bimba"
