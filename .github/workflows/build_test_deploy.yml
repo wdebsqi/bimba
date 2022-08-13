@@ -1,7 +1,6 @@
-name: Build, test and deploy Python app to Azure Web App
+name: Build, test and deploy Python app to VPS
 
 env:
-  AZURE_WEBAPP_NAME: bimba
   PYTHON_VERSION: '3.10'
 
 on:
@@ -59,13 +58,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
 
-    steps:
-      - name: Pack repo to .tar archive
-        run: |
-          mkdir ../build
-          cp -TR . ../build
-          tar -cvf deploy.tar ../build/
-      
+    steps:    
       - name: Copy repository to VPS
         uses: appleboy/scp-action@master
         with:
@@ -73,5 +66,5 @@ jobs:
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.KEY }}
           passphrase: ${{ secrets.PASSPHRASE }}
-          source: "deploy.tar"
+          source: "."
           target: "~/bimba"
