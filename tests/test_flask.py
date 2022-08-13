@@ -1,11 +1,11 @@
 import pytest
-from app import flask_app
+from app import app
 
 
 class TestFlask:
     @pytest.fixture(scope="class")
     def client(self):
-        return flask_app.test_client()
+        return app.test_client()
 
     def test_home(self, client):
         res = client.get("/")
