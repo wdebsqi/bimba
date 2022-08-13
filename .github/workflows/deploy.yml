@@ -36,3 +36,12 @@ jobs:
           passphrase: ${{ secrets.PASSPHRASE }}
           source: "deploy.tar"
           target: "/home/bimba"
+          
+      - name: Unpack the build and run the app
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.KEY }}
+          passphrase: ${{ secrets.PASSPHRASE }}
+          script: cd /home/bimba && tar xvf deploy.tar && python3 build/run.py
