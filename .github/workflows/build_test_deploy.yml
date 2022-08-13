@@ -60,6 +60,12 @@ jobs:
     needs: build
 
     steps:
+      - name: Pack repo to .tar archive
+        run: |
+          mkdir ../build
+          cp -TR . ../build
+          tar -cvf deploy.tar ../build/
+      
       - name: Copy repository to VPS
         uses: appleboy/scp-action@master
         with:
@@ -67,5 +73,5 @@ jobs:
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.KEY }}
           passphrase: ${{ secrets.PASSPHRASE }}
-          source: "*"
+          source: "deploy.tar"
           target: "~/bimba"
