@@ -44,4 +44,4 @@ jobs:
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.KEY }}
           passphrase: ${{ secrets.PASSPHRASE }}
-          script: cd /home/bimba && tar xvf deploy.tar && systemctl restart bimba.service
+          script: cd /home/bimba && tar xvf deploy.tar && pip install -r build/requirements.txt && systemctl restart bimba.service
