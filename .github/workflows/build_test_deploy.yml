@@ -67,5 +67,5 @@ jobs:
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.KEY }}
           passphrase: ${{ secrets.PASSPHRASE }}
-          source: ".,!venv"
+          source: "*"
           target: "~/bimba"
