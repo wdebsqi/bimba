@@ -1,0 +1,9 @@
+services:
+  web:
+    build: ./app/
+    ports:
+      - "5000:5000"
+  neo4j:
+    build: ./neo4j_db/
+    ports:
+      - "5001:5001"
