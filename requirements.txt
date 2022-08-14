@@ -1,7 +1,0 @@
-black
-flake8
-flask
-mypy
-neo4j
-pytest
-python-dotenv
