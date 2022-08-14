@@ -37,11 +37,11 @@ jobs:
           source: "deploy.tar"
           target: "/home/bimba"
           
-      - name: Unpack the build and restart the service on VPS
+      - name: Unpack the build, build Docker images and restart containers
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.KEY }}
           passphrase: ${{ secrets.PASSPHRASE }}
-          script: cd /home/bimba && tar xvf deploy.tar && docker compose down && docker compose up
+          script: cd /home/bimba && tar xvf deploy.tar && cd build && docker compose down && docker compose up -d
