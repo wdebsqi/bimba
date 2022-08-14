@@ -1,5 +1,5 @@
 import pytest
-from app import app
+from app.src import app
 
 
 class TestFlask:
