@@ -7,3 +7,14 @@ services:
     build: ./neo4j_db/
     ports:
       - "5001:5001"
+  db:
+    image: postgres
+    restart: on-failure
+    environment:
+      POSTGRES_USER: "${POSTGRES_USER}"
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
+      POSTGRES_DB: "${POSTGRES_DB}"
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./postgres_data/postgres:/var/lib/postgresql/data
