@@ -21,7 +21,7 @@ class Neo4jDB:
                 logging.error("Auth error when pinging Neo4j DB: %s", ae.message)
                 return False
             except Exception as e:
-                logging.error("Unidentified error when pinging Neo4j DB: %s", e.message)
+                logging.error("Unidentified error when pinging Neo4j DB: %s", e)
                 return False
 
     def create_friendship(self, person1_name, person2_name):
