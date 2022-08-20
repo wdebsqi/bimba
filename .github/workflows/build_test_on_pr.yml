@@ -34,13 +34,13 @@ jobs:
       - name: Create .env file
         run: |
           touch .env
-          echo NEO4J_URL=${{ secrets.NEO4J_URL }} >> .env
-          echo NEO4J_USERNAME=${{ secrets.NEO4J_USERNAME }} >> .env
-          echo NEO4J_PASSWORD=${{ secrets.NEO4J_PASSWORD }} >> .env
-          echo POSTGRES_USER=${{ secrets.POSTGRES_USER }} >> .env
-          echo POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }} >> .env
-          echo POSTGRES_DB=${{ secrets.POSTGRES_DB }} >> .env
-          echo POSTGRES_URL=${{ secrets.POSTGRES_URL }} >> .env
+          echo NEO4J_URL="${{ secrets.NEO4J_URL }}" >> .env
+          echo NEO4J_USERNAME="${{ secrets.NEO4J_USERNAME }}"" >> .env
+          echo NEO4J_PASSWORD="${{ secrets.NEO4J_PASSWORD }}"" >> .env
+          echo POSTGRES_USER="${{ secrets.POSTGRES_USER }}"" >> .env
+          echo POSTGRES_PASSWORD="${{ secrets.POSTGRES_PASSWORD }}"" >> .env
+          echo POSTGRES_DB="${{ secrets.POSTGRES_DB }}"" >> .env
+          echo POSTGRES_URL="${{ secrets.POSTGRES_URL }}"" >> .env
       
       - name: Test with PyTest
         run: |
