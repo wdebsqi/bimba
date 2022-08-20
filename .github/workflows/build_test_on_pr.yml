@@ -41,10 +41,10 @@ jobs:
           echo POSTGRES_PASSWORD="${{ secrets.POSTGRES_PASSWORD }}"" >> .env
           echo POSTGRES_DB="${{ secrets.POSTGRES_DB }}"" >> .env
           echo POSTGRES_URL="${{ secrets.POSTGRES_URL }}"" >> .env
-          echo $POSTGRES_USER
-          echo $POSTGRES_PASSWORD
-          echo $POSTGRES_DB
-          echo $POSTGRES_URL
+          echo "$POSTGRES_USER"
+          echo "$POSTGRES_PASSWORD"
+          echo "$POSTGRES_DB"
+          echo "$POSTGRES_URL"
       
       - name: Test with PyTest
         run: |
