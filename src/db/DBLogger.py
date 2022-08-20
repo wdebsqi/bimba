@@ -1,3 +1,5 @@
+import logging
+
 from . import sql_db
 from .models.Log import Log
 
@@ -13,6 +15,6 @@ class DBLogger:
             if with_commit:
                 self.db.session.commit()
             return True
-        except Exception:
-            print(f"Failed to create a log: message={message}, file={file}, type={type}")
+        except Exception as e:
+            logging.error("Failed to create a log: %s", e)
             return False
