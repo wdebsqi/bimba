@@ -41,7 +41,6 @@ jobs:
           echo POSTGRES_PASSWORD="${{ secrets.POSTGRES_PASSWORD }}" >> .env
           echo POSTGRES_DB="${{ secrets.POSTGRES_DB }}" >> .env
           echo POSTGRES_URL="${{ secrets.POSTGRES_URL }}" >> .env
-          cat .env
       
       - name: Test with PyTest
         run: |
