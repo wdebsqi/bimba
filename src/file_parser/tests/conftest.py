@@ -1,7 +1,8 @@
 import pandas as pd
 import pytest
-from ..src.StopsParser import StopsParser
+
 from ..src.FileParser import FileParser
+from ..src.StopsParser import StopsParser
 
 
 @pytest.fixture(scope="module")

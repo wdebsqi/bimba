@@ -1,4 +1,5 @@
 import pandas as pd
+
 from .FileParser import FileParser
 
 CYPHER_CREATE_BEGINNING = "CREATE \n"
