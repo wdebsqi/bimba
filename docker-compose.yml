@@ -3,11 +3,24 @@ services:
     build: ./app/
     ports:
       - "5000:5000"
+  
   neo4j:
     build: ./neo4j_db/
     ports:
       - "5001:5001"
     env_file: .env
+  
+  file_parser:
+    build:
+      context: ./src/
+      dockerfile: file_parser/Dockerfile
+    restart: on-failure
+    ports:
+      - "5002:5002"
+    volumes:
+      - ../ztm_files:/bimba/ztm_files
+    env_file: .env
+
   db:
     image: postgres
     restart: on-failure
