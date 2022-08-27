@@ -31,6 +31,7 @@ jobs:
           echo POSTGRES_PASSWORD="${{ secrets.POSTGRES_PASSWORD }}" >> .env
           echo POSTGRES_DB="${{ secrets.POSTGRES_DB }}" >> .env
           echo POSTGRES_URL="${{ secrets.POSTGRES_URL }}" >> .env
+          echo ZTM_FILES_DIRECTORY="${{ secrets.ZTM_FILES_DIRECTORY }}" >> .env
           sed -i -e 's/\\//g' .env
           
       - name: Pack repository to .tar file
