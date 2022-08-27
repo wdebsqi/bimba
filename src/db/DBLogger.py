@@ -5,6 +5,11 @@ from .models.Log import Log
 
 
 class DBLogger:
+    LOG_TYPE_DEBUG = "debug"
+    LOG_TYPE_ERROR = "error"
+    LOG_TYPE_INFO = "info"
+    LOG_TYPE_TEST = "test"
+
     def __init__(self):
         self.db = sql_db
 
