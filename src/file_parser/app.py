@@ -1,22 +1,24 @@
-import pandas as pd
+from datetime import datetime
 
-from . import (
-    FILE_STOPS,
-    STOP_CODE_COLUMN,
-    STOP_COLUMNS,
-    ZONE_COLUMN,
-    ZONE_TO_INCLUDE,
-    file_processor,
-    stops_parser,
-)
+from . import ZTM_FILES_DIRECTORY, ZTM_FILES_ENDPOINT, db_logger, file_processor, site_watcher
 
-# Read and pre-process stops file
-df = pd.read_csv(FILE_STOPS)  # won't work due to the lack of path in FILE_STOPS
-df = file_processor.filter_on_column(df, ZONE_COLUMN, ZONE_TO_INCLUDE)
-df = file_processor.remove_columns(df, [STOP_CODE_COLUMN, ZONE_COLUMN])
-df = file_processor.set_columns(df, STOP_COLUMNS)
+db_logger.log_message("Starting the file_parser service", __file__, db_logger.LOG_TYPE_INFO)
 
-# Parse stops file to Cypher CREATE query
-cypher_query = stops_parser.parse_dataframe_to_cypher_create_query(df)
+while True:
+    now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-print(cypher_query)
+    print(f"{now} - Checking for new stops file...")
+    db_logger.log_message("Checking for new stops file", __file__, db_logger.LOG_TYPE_INFO)
+
+    response = site_watcher.query_site(site_watcher.HTTP_HEAD)
+
+    new_data_available = site_watcher.check_if_new_data_available(response)
+    filename = site_watcher.get_current_filename()
+    print(f"New data available? {new_data_available} | Current filename: {filename}")
+
+    if new_data_available:
+        filepath = f"{ZTM_FILES_DIRECTORY}{filename}"
+        file_processor.download_zip_file(ZTM_FILES_ENDPOINT, filepath)
+        file_processor.unzip_file_archive(filepath, ZTM_FILES_DIRECTORY, ["stops.txt"])
+
+    site_watcher.sleep()
