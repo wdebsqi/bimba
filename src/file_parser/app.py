@@ -1,21 +1,16 @@
-from . import (
-    ZTM_FILES_DIRECTORY,
-    ZTM_FILES_ENDPOINT,
-    db_logger,
-    file_processor,
-    get_current_timestamp,
-    site_watcher,
-)
+from datetime import datetime
 
-db_logger.log_message(
-    get_current_timestamp(), "Starting the file_parser service", __file__, db_logger.LOG_TYPE_INFO
-)
+from . import ZTM_FILES_DIRECTORY, ZTM_FILES_ENDPOINT, db_logger, file_processor, site_watcher
+
+TIMESTAMP_FORMAT = "%Y-%m-%d %H:%M:%S"
+
+db_logger.log_message("Starting the file_parser service", __file__, db_logger.LOG_TYPE_INFO)
 
 while True:
-    now = get_current_timestamp()
+    now = datetime.now().strftime(TIMESTAMP_FORMAT)
 
     print(f"{now} - Checking for new stops file...")
-    db_logger.log_message(now, "Checking for new stops file", __file__, db_logger.LOG_TYPE_INFO)
+    db_logger.log_message("Checking for new stops file", __file__, db_logger.LOG_TYPE_INFO)
 
     response = site_watcher.query_site(site_watcher.HTTP_HEAD)
 
