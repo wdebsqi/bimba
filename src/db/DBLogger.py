@@ -13,9 +13,9 @@ class DBLogger:
     def __init__(self):
         self.db = sql_db
 
-    def log_message(self, message, file, type, with_commit=True) -> bool:
+    def log_message(self, created_at, message, file, type, with_commit=True) -> bool:
         try:
-            log = Log(message=message, file=file, type=type)
+            log = Log(created_at=created_at, message=message, file=file, type=type)
             self.db.session.add(log)
             if with_commit:
                 self.db.session.commit()
