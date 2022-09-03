@@ -1,4 +1,5 @@
 import os
+from datetime import datetime
 
 from ..db.DBLogger import DBLogger
 from .src.FileProcessor import FileProcessor
@@ -22,3 +23,8 @@ db_logger = DBLogger()
 file_processor = FileProcessor(db_logger)
 stops_parser = StopsParser()
 site_watcher = SiteWatcher(ZTM_FILES_ENDPOINT, SITE_WATCHER_WAIT_TIME, db_logger, True)
+
+
+def get_current_timestamp(format: str = "%Y-%m-%d %H:%M:%S") -> str:
+    """Returns the current timestamp in the provided format."""
+    return datetime.now().strftime(format)
