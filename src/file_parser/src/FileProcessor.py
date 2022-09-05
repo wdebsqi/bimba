@@ -25,6 +25,12 @@ class FileProcessor:
             res = requests.get(url)
             with open(destination_path, "wb") as file:
                 file.write(res.content)
+            if self.db_logger:
+                self.db_logger.log_message(
+                    f"Successfully downloaded file to {destination_path}",
+                    __file__,
+                    self.db_logger.LOG_TYPE_INFO,
+                )
             return True
         except Exception as e:
             if hasattr(e, "message"):
@@ -44,6 +50,13 @@ class FileProcessor:
         try:
             with ZipFile(archive_file_path, "r") as zip_file:
                 zip_file.extractall(destination_path, files_to_extract)
+            if self.db_logger:
+                self.db_logger.log_message(
+                    f"Successfully unzipped files {files_to_extract} to {destination_path}",
+                    __file__,
+                    self.db_logger.LOG_TYPE_INFO,
+                )
+            return True
         except Exception as e:
             if hasattr(e, "message"):
                 if self.db_logger:
@@ -51,6 +64,7 @@ class FileProcessor:
             else:
                 if self.db_logger:
                     self.db_logger.log_message(str(e), __file__, self.db_logger.LOG_TYPE_ERROR)
+            return False
 
     def filter_on_column(
         self, df: pd.DataFrame, col_name: str, col_value: str | int | float | bool
