@@ -1,7 +1,18 @@
 from datetime import datetime
+import pandas as pd
 
-from . import ZTM_FILES_DIRECTORY, ZTM_FILES_ENDPOINT, db_logger, file_processor, site_watcher
+from . import (
+    ZTM_FILES_DIRECTORY,
+    ZTM_FILES_ENDPOINT,
+    db_logger,
+    file_processor,
+    site_watcher,
+    neo4j_controller,
+    stops_parser,
+)
 
+STOP_NODE_LABEL = "STOP"
+STOPS_FILE = "stops.txt"
 TIMESTAMP_FORMAT = "%Y-%m-%d %H:%M:%S"
 
 db_logger.log_message("Starting the file_parser service", __file__, db_logger.LOG_TYPE_INFO)
@@ -21,6 +32,14 @@ while True:
     if new_data_available:
         filepath = f"{ZTM_FILES_DIRECTORY}{filename}"
         file_processor.download_zip_file(ZTM_FILES_ENDPOINT, filepath)
-        file_processor.unzip_file_archive(filepath, ZTM_FILES_DIRECTORY, ["stops.txt"])
+        file_processor.unzip_file_archive(filepath, ZTM_FILES_DIRECTORY, [STOPS_FILE])
+        neo4j_controller.remove_all_nodes(STOP_NODE_LABEL)
+        stops_df = pd.read_csv(STOPS_FILE)
+        query = stops_parser.parse_dataframe_to_cypher_create_query(stops_df)
+        result = neo4j_controller.run_write_query(query)
+        if result:
+            db_logger.log_message(
+                f"Successfully created stops. Summary: {result}", __file__, db_logger.LOG_TYPE_INFO
+            )
 
     site_watcher.sleep()
