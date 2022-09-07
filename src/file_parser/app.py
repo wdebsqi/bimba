@@ -35,7 +35,12 @@ while True:
         file_processor.download_zip_file(ZTM_FILES_ENDPOINT, filepath)
         file_processor.unzip_file_archive(filepath, ZTM_FILES_DIRECTORY, [STOPS_FILE])
         neo4j_controller.remove_all_nodes(STOP_NODE_LABEL)
-        stops_df = pd.read_csv(STOPS_FILE)
+        try:
+            stops_df = pd.read_csv(f"{ZTM_FILES_DIRECTORY}{STOPS_FILE}")
+        except Exception as e:
+            db_logger.log_message(
+                f"Error while reading stops file: {e}", __file__, db_logger.LOG_TYPE_ERROR
+            )
         query = stops_parser.parse_dataframe_to_cypher_create_query(stops_df)
         result = neo4j_controller.run_write_query(query)
         if result:
