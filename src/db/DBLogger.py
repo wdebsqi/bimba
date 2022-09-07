@@ -1,5 +1,4 @@
 from datetime import datetime
-import logging
 
 from . import sql_db
 from .models.Log import Log
@@ -15,6 +14,13 @@ class DBLogger:
         self.db = sql_db
 
     def log_message(self, message, file, type, with_commit=True) -> bool:
+        """Logs a message and returns boolean value indicating if the log was successful.
+        Parameters:
+        - message: message to be logged
+        - file: the information about the file related to the log (e.g. __file__)
+        - type: the type of log. Use the LOG_TYPE_* constants
+        - with_commit: if True, the log will be commited to the database.
+          If False, the log will be added to the session but not commited."""
         try:
             log = Log(created_at=datetime.now(), message=message, file=file, type=type)
             self.db.session.add(log)
@@ -22,5 +28,5 @@ class DBLogger:
                 self.db.session.commit()
             return True
         except Exception as e:
-            logging.error("Failed to create a log: %s", e)
+            print(f"Error {e} encountered when logging message {message}")
             return False
