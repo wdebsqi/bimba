@@ -11,4 +11,5 @@ RUN apt-get update \
 
 ENTRYPOINT ["python3", "-m", "src.file_parser.app"]
 
-COPY . /bimba/src
+COPY ./db /bimba/src/db
+COPY ./file_parser /bimba/src/file_parser
