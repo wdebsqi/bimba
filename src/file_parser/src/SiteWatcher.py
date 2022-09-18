@@ -3,6 +3,7 @@ import time
 
 import requests
 from requests import Response
+from requests.exceptions import Timeout
 
 from ...db.DBLogger import DBLogger
 
@@ -69,16 +70,33 @@ class SiteWatcher:
         time.sleep(self.waiting_time)
 
     def query_site(self, method: str) -> Response:
-        """Queries the site using the provided HTTP method and returns the response"""
+        """Queries the site using the provided HTTP method and returns the response.
+        Returns None if the query failed."""
+        response = None
 
-        if method == self.HTTP_HEAD:
-            response = requests.head(self.url)
-        elif method == self.HTTP_GET:
-            response = requests.get(self.url)
-        else:
+        try:
+            if method == self.HTTP_HEAD:
+                response = requests.head(self.url)
+            elif method == self.HTTP_GET:
+                response = requests.get(self.url)
+            else:
+                if self.db_logger:
+                    self.db_logger.log_message(
+                        f"Invalid method: {method}", __file__, self.db_logger.LOG_TYPE_ERROR
+                    )
+        except Timeout:
             if self.db_logger:
                 self.db_logger.log_message(
-                    f"Invalid method: {method}", __file__, self.db_logger.LOG_TYPE_ERROR
+                    f"Timeout when trying to query {self.url}",
+                    __file__,
+                    self.db_logger.LOG_TYPE_ERROR,
+                )
+        except Exception as e:
+            if self.db_logger:
+                self.db_logger.log_message(
+                    f"Unidentified error when trying to query {self.url}: {e}",
+                    __file__,
+                    self.db_logger.LOG_TYPE_ERROR,
                 )
 
         return response
