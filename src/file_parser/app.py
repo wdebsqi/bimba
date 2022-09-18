@@ -21,14 +21,16 @@ db_logger.log_message("Starting the file_parser service", __file__, db_logger.LO
 while True:
     now = datetime.now().strftime(TIMESTAMP_FORMAT)
 
-    print(f"{now} - Checking for new stops file...")
     db_logger.log_message("Checking for new stops file", __file__, db_logger.LOG_TYPE_INFO)
 
     response = site_watcher.query_site(site_watcher.HTTP_HEAD)
 
+    if not response:
+        site_watcher.sleep()
+        continue
+
     new_data_available = site_watcher.check_if_new_data_available(response)
     filename = site_watcher.get_current_filename()
-    print(f"New data available? {new_data_available} | Current filename: {filename}")
 
     if new_data_available:
         filepath = f"{ZTM_FILES_DIRECTORY}{filename}"
