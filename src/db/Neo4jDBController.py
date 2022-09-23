@@ -86,11 +86,11 @@ class Neo4jDBController:
             NODES_DELETED
         ]
 
-    def run_write_query(self, query: str) -> dict:
-        """Runs a provided write query and returns the summary."""
+    def run_write_query(self, query: str, **params) -> dict:
+        """Runs a provided write query with the optional parameters and returns the summary."""
         try:
             with self.driver.session() as session:
-                result = session.write_transaction(self._run_write_query, query)
+                result = session.write_transaction(self._run_write_query, query, params)
                 return result
 
         except TransactionError as te:
@@ -108,9 +108,10 @@ class Neo4jDBController:
             )
 
     @staticmethod
-    def _run_write_query(tx, query: str) -> dict:
-        """Runs a provided write query and returns the result summary."""
-        result = tx.run(query)
+    def _run_write_query(tx, query: str, params: dict) -> dict:
+        """Runs a provided write query with the optional parameters
+        and returns the result summary."""
+        result = tx.run(query, params)
         summary = result.consume()
         return Neo4jDBController._extract_values_from_counters(summary.counters)
 
