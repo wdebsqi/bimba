@@ -1,5 +1,4 @@
-*.drawio
-*.drawio.bkp
+*.drawio*
 .ipynb_checkpoints
 .env
 .vscode
