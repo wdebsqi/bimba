@@ -86,11 +86,60 @@ class Neo4jDBController:
             NODES_DELETED
         ]
 
-    def run_write_query(self, query: str) -> dict:
-        """Runs a provided write query and returns the summary."""
+    def remove_all_connections(self, connection_type: str) -> int:
+        """Removes all connections of a given type and returns the number of removed rows."""
         try:
             with self.driver.session() as session:
-                result = session.write_transaction(self._run_write_query, query)
+                result = session.write_transaction(self._remove_all_connections, connection_type)
+                if result > 0:
+                    self.db_logger.log_message(
+                        f"Successfully removed {result} connections of type {connection_type}",
+                        __file__,
+                        self.db_logger.LOG_TYPE_INFO,
+                        with_commit=False,
+                    )
+                else:
+                    self.db_logger.log_message(
+                        f"""Removed 0 connections of type {connection_type}.
+                        Check if the connection type was correct.""",
+                        __file__,
+                        self.db_logger.LOG_TYPE_DEBUG,
+                        with_commit=False,
+                    )
+
+                return result
+
+        except TransactionError as te:
+            self.db_logger.log_message(
+                f"""Transaction error: {te} when trying to remove
+                all connections of type {connection_type}""",
+                __file__,
+                self.db_logger.LOG_TYPE_ERROR,
+                with_transaction=False,
+            )
+
+        except Exception as e:
+            self.db_logger.log_message(
+                f"Unidentified error when removing all connections of type {connection_type}: {e}",
+                __file__,
+                self.db_logger.LOG_TYPE_ERROR,
+                with_transaction=False,
+            )
+
+    @staticmethod
+    def _remove_all_connections(tx, connection_type: str) -> int:
+        """Removes all connections of a given type and returns the number of removed connections."""
+        result = tx.run(f"MATCH ()-[r:{connection_type}]-() DELETE r")
+        summary = result.consume()
+        return Neo4jDBController._extract_values_from_counters(
+            summary.counters, [RELATIONSHIPS_DELETED]
+        )[RELATIONSHIPS_DELETED]
+
+    def run_write_query(self, query: str, **params) -> dict:
+        """Runs a provided write query with the optional parameters and returns the summary."""
+        try:
+            with self.driver.session() as session:
+                result = session.write_transaction(self._run_write_query, query, params)
                 return result
 
         except TransactionError as te:
@@ -108,9 +157,10 @@ class Neo4jDBController:
             )
 
     @staticmethod
-    def _run_write_query(tx, query: str) -> dict:
-        """Runs a provided write query and returns the result summary."""
-        result = tx.run(query)
+    def _run_write_query(tx, query: str, params: dict) -> dict:
+        """Runs a provided write query with the optional parameters
+        and returns the result summary."""
+        result = tx.run(query, params)
         summary = result.consume()
         return Neo4jDBController._extract_values_from_counters(summary.counters)
 

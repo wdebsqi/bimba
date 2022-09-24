@@ -2,6 +2,7 @@ import os
 
 from ..db.DBLogger import DBLogger
 from ..db.Neo4jDBController import Neo4jDBController
+from .src.ConnectionsParser import ConnectionsParser
 from .src.FileProcessor import FileProcessor
 from .src.SiteWatcher import SiteWatcher
 from .src.StopsParser import StopsParser
@@ -27,3 +28,4 @@ neo4j_controller = Neo4jDBController(NEO4J_URL, NEO4J_USERNAME, NEO4J_PASSWORD, 
 file_processor = FileProcessor(db_logger)
 stops_parser = StopsParser()
 site_watcher = SiteWatcher(ZTM_FILES_ENDPOINT, SITE_WATCHER_WAIT_TIME, db_logger, True)
+connections_parser = ConnectionsParser(db_logger)

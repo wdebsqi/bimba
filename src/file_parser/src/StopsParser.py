@@ -1,9 +1,10 @@
 import pandas as pd
 
+from . import STOP_NODE_LABEL
 from .FileParser import FileParser
 
 CYPHER_CREATE_BEGINNING = "CREATE \n"
-CYPHER_NODE_STOP_BEGINNING = "(:STOP {"
+CYPHER_NODE_STOP_BEGINNING = f"(:{STOP_NODE_LABEL} {{"
 
 
 class StopsParser(FileParser):
