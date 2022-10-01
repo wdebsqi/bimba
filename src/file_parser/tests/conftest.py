@@ -1,10 +1,36 @@
 import pandas as pd
 import pytest
 
-from ..src.ConnectionsParser import ConnectionsParser
+from ..src.ConnectionsParser import (
+    COL_ROUTE_ID,
+    COL_STOP_ID,
+    COL_STOP_SEQUENCE,
+    COL_TRIP_ID,
+    RESULT_COL_FROM_STOP,
+    RESULT_COL_LINES,
+    RESULT_COL_TO_STOP,
+    ConnectionsParser,
+)
 from ..src.FileParser import FileParser
 from ..src.SiteWatcher import SiteWatcher
 from ..src.StopsParser import StopsParser
+
+COL_ARRIVAL_TIME = "arrival_time"
+COL_BRIGADE = "brigade"
+COL_DEPARTURE_TIME = "departure_time"
+COL_DIRECTION_ID = "direction_id"
+COL_DROP_OFF_TYPE = "drop_off_type"
+COL_PICKUP_TYPE = "pickup_type"
+COL_SERVICE_ID = "service_id"
+COL_SHAPE_ID = "shape_id"
+COL_STOP_CODE = "stop_code"
+COL_STOP_HEADSIGN = "stop_headsign"
+COL_STOP_NAME = "stop_name"
+COL_STOP_LAT = "stop_lat"
+COL_STOP_LON = "stop_lon"
+COL_TRIP_HEADSIGN = "trip_headsign"
+COL_WHEELCHAIR_ACCESSIBLE = "wheelchair_accessible"
+COL_ZONE_ID = "zone_id"
 
 
 @pytest.fixture(scope="module")
@@ -23,12 +49,12 @@ def stops_parser():
 @pytest.fixture(scope="module")
 def example_raw_stops_dataframe():
     data = {
-        "stop_id": [1234, 5678, 9012],
-        "stop_code": ["ABC1234", "DEF5678", "GHI9012"],
-        "stop_name": ["ABC", "DEF", "GHI"],
-        "stop_lat": [1.2, 2.3, 3.4],
-        "stop_lon": [9.8, 8.7, 7.6],
-        "zone_id": ["A", "B", "A"],
+        COL_STOP_ID: [1234, 5678, 9012],
+        COL_STOP_CODE: ["ABC1234", "DEF5678", "GHI9012"],
+        COL_STOP_NAME: ["ABC", "DEF", "GHI"],
+        COL_STOP_LAT: [1.2, 2.3, 3.4],
+        COL_STOP_LON: [9.8, 8.7, 7.6],
+        COL_ZONE_ID: ["A", "B", "A"],
     }
     return pd.DataFrame.from_dict(data)
 
@@ -70,7 +96,7 @@ def connections_parser():
 @pytest.fixture(scope="module")
 def example_raw_stop_times_df():
     data = {
-        "trip_id": [
+        COL_TRIP_ID: [
             "2_2182219^+",
             "2_2182219^+",
             "2_2182219^+",
@@ -81,7 +107,7 @@ def example_raw_stop_times_df():
             "2_2182221^+",
             "2_2182221^+",
         ],
-        "arrival_time": [
+        COL_ARRIVAL_TIME: [
             "06:00:00",
             "06:01:00",
             "06:03:00",
@@ -92,7 +118,7 @@ def example_raw_stop_times_df():
             "18:00:00",
             "18:00:00",
         ],
-        "departure_time": [
+        COL_DEPARTURE_TIME: [
             "06:00:00",
             "06:01:00",
             "06:03:00",
@@ -103,9 +129,9 @@ def example_raw_stop_times_df():
             "18:00:00",
             "18:00:00",
         ],
-        "stop_id": [1234, 5678, 9101, 1213, 2122, 2324, 2526, 9101, 1213],
-        "stop_sequence": [1, 2, 3, 4, 1, 2, 3, 1, 2],
-        "stop_headsign": [
+        COL_STOP_ID: [1234, 5678, 9101, 1213, 2122, 2324, 2526, 9101, 1213],
+        COL_STOP_SEQUENCE: [1, 2, 3, 4, 1, 2, 3, 1, 2],
+        COL_STOP_HEADSIGN: [
             "OS. TEST",
             "OS. TEST",
             "OS. TEST",
@@ -116,8 +142,8 @@ def example_raw_stop_times_df():
             "OS. TEST",
             "OS. TEST",
         ],
-        "pickup_type": [1, 1, 3, 1, 3, 1, 1, 3, 1],
-        "drop_off_type": [1, 1, 3, 1, 3, 1, 1, 3, 1],
+        COL_PICKUP_TYPE: [1, 1, 3, 1, 3, 1, 1, 3, 1],
+        COL_DROP_OFF_TYPE: [1, 1, 3, 1, 3, 1, 1, 3, 1],
     }
     return pd.DataFrame.from_dict(data)
 
@@ -125,27 +151,27 @@ def example_raw_stop_times_df():
 @pytest.fixture(scope="module")
 def example_raw_trips_df():
     data = {
-        "route_id": ["T01", "100"],
-        "service_id": [2, 4],
-        "trip_id": ["2_2182219^+", "2_2182220^+"],
-        "trip_headsign": ["OS. TEST", "TEST STREET"],
-        "direction_id": [1, 0],
-        "shape_id": [123456, 654321],
-        "wheelchair_accessible": [0, 1],
-        "brigade": [1, 2],
+        COL_ROUTE_ID: ["T01", "100"],
+        COL_SERVICE_ID: [2, 4],
+        COL_TRIP_ID: ["2_2182219^+", "2_2182220^+"],
+        COL_TRIP_HEADSIGN: ["OS. TEST", "TEST STREET"],
+        COL_DIRECTION_ID: [1, 0],
+        COL_SHAPE_ID: [123456, 654321],
+        COL_WHEELCHAIR_ACCESSIBLE: [0, 1],
+        COL_BRIGADE: [1, 2],
     }
     return pd.DataFrame.from_dict(data)
 
 
 @pytest.fixture(scope="module")
 def connections_batch():
-    from_stop = "from_stop"
-    to_stop = "to_stop"
-    line = "line"
+    from_stop = RESULT_COL_FROM_STOP
+    to_stop = RESULT_COL_TO_STOP
+    lines = RESULT_COL_LINES
     return [
-        {from_stop: 1234, to_stop: 5678, line: "T01"},
-        {from_stop: 5678, to_stop: 9101, line: "T01"},
-        {from_stop: 9101, to_stop: 1213, line: "T01"},
-        {from_stop: 2122, to_stop: 2324, line: "100"},
-        {from_stop: 2324, to_stop: 2526, line: "100"},
+        {from_stop: 1234, to_stop: 5678, lines: ["T01"]},
+        {from_stop: 5678, to_stop: 9101, lines: ["T01"]},
+        {from_stop: 9101, to_stop: 1213, lines: ["T01"]},
+        {from_stop: 2122, to_stop: 2324, lines: ["100"]},
+        {from_stop: 2324, to_stop: 2526, lines: ["100"]},
     ]
