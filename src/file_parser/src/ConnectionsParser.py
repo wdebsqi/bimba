@@ -12,6 +12,7 @@ COLS_SOURCE_DF = [COL_TRIP_ID, COL_STOP_ID, COL_STOP_SEQUENCE, COL_ROUTE_ID]
 RESULT_COL_FROM_STOP = "from_stop"
 RESULT_COL_TO_STOP = "to_stop"
 RESULT_COL_LINE = "line"
+RESULT_COL_LINES = "lines"
 RESULT_COLS_DF = [RESULT_COL_FROM_STOP, RESULT_COL_TO_STOP, RESULT_COL_LINE]
 
 
@@ -55,8 +56,18 @@ class ConnectionsParser(FileParser):
             self.source_dataframe = self.source_dataframe[COLS_SOURCE_DF]
         return self
 
-    def _build_connections_dataframe(self):
-        """Builds the DataFrame containing the connections data."""
+    def _build_separate_connections_dataframe(self):
+        """Builds a DataFrame containing the data about separate connections.
+        Each row of the DataFrame represents a single connection between two stops for a given line.
+        Example DataFrame may look like this:
+
+        | id | from_stop | to_stop | line |
+        |:--:|:---------:|:-------:|:----:|
+        | 0  | 1143      | 4145    | A    |
+        | 1  | 4145      | 1925    | B    |
+        | 2  | 1925      | 2969    | B    |
+        | 3  | 1143      | 4145    | C    |
+        | 4  | 4145      | 1925    | C    |"""
         if self.source_dataframe is None:
             self.db_logger.log_message(
                 "Source DataFrame is None. Can't extract necessary columns.",
@@ -64,33 +75,70 @@ class ConnectionsParser(FileParser):
                 self.db_logger.LOG_TYPE_ERROR,
             )
             return None
-        else:
-            result_dict = {RESULT_COL_FROM_STOP: [], RESULT_COL_TO_STOP: [], RESULT_COL_LINE: []}
-            result_df = pd.DataFrame.from_dict(result_dict)
-            lines_available = self.source_dataframe[COL_ROUTE_ID].unique()
 
-            for line in lines_available:
-                line_df = self.source_dataframe[self.source_dataframe[COL_ROUTE_ID] == line]
+        result_dict = {RESULT_COL_FROM_STOP: [], RESULT_COL_TO_STOP: [], RESULT_COL_LINE: []}
+        result_df = pd.DataFrame.from_dict(result_dict)
+        lines_available = self.source_dataframe[COL_ROUTE_ID].unique()
 
-                for idx, row in line_df.iloc[1:, :].iterrows():
-                    if row[COL_STOP_SEQUENCE] == 0:
-                        continue
+        for line in lines_available:
+            line_df = self.source_dataframe[self.source_dataframe[COL_ROUTE_ID] == line]
 
-                    prev_row = self.source_dataframe.iloc[idx - 1]
-                    result_dict[RESULT_COL_FROM_STOP].append(prev_row[COL_STOP_ID])
-                    result_dict[RESULT_COL_TO_STOP].append(row[COL_STOP_ID])
-                    result_dict[RESULT_COL_LINE].append(prev_row[COL_ROUTE_ID])
+            for idx, row in line_df.iloc[1:, :].iterrows():
+                if row[COL_STOP_SEQUENCE] == 0:
+                    continue
 
-            result_df = pd.DataFrame.from_dict(result_dict)
-            return result_df.drop_duplicates().reset_index(drop=True)
+                prev_row = self.source_dataframe.iloc[idx - 1]
+                result_dict[RESULT_COL_FROM_STOP].append(prev_row[COL_STOP_ID])
+                result_dict[RESULT_COL_TO_STOP].append(row[COL_STOP_ID])
+                result_dict[RESULT_COL_LINE].append(prev_row[COL_ROUTE_ID])
+
+        result_df = pd.DataFrame.from_dict(result_dict)
+        return result_df.drop_duplicates().reset_index(drop=True)
+
+    def _merge_separate_connections(self, separate_connections_df: pd.DataFrame) -> pd.DataFrame:
+        """Merges the DataFrame containing the data about separate connections.
+        Each row of the result DataFrame represents a single connection between two stops.
+        The lines commuting between two stops are merged into a list, stored in the 'lines' column.
+        Example DataFrame may look like this:
+        | id | from_stop | to_stop | lines |
+        |:--:|:---------:|:-------:|:-----:|
+        | 0  | 1143      | 4145    | [A, C]|
+        | 1  | 4145      | 1925    | [B, C]|
+        | 2  | 1925      | 2969    | [B]   |"""
+        separate_connections_first_row = separate_connections_df.iloc[0]
+        result_df = pd.DataFrame(
+            {
+                RESULT_COL_FROM_STOP: [separate_connections_first_row[RESULT_COL_FROM_STOP]],
+                RESULT_COL_TO_STOP: [separate_connections_first_row[RESULT_COL_TO_STOP]],
+                RESULT_COL_LINE: [[separate_connections_first_row[RESULT_COL_LINE]]],
+            }
+        )
+
+        for i in range(1, len(separate_connections_df.index)):
+            row_to_check = separate_connections_df.iloc[i].copy()
+            rows_with_same_stops = result_df[
+                (result_df[RESULT_COL_FROM_STOP] == row_to_check[RESULT_COL_FROM_STOP])
+                & (result_df[RESULT_COL_TO_STOP] == row_to_check[RESULT_COL_TO_STOP])
+            ]
+            found_same_stops_for_the_row = len(rows_with_same_stops.index) > 0
+
+            if found_same_stops_for_the_row:
+                idx = rows_with_same_stops.iloc[0].name
+                result_df.at[idx, RESULT_COL_LINE].append(row_to_check[RESULT_COL_LINE])
+            else:
+                row_to_check.at[RESULT_COL_LINE] = [row_to_check[RESULT_COL_LINE]]
+                result_df = pd.concat([result_df, row_to_check.to_frame().T])
+
+        result_df.columns = [RESULT_COL_FROM_STOP, RESULT_COL_TO_STOP, RESULT_COL_LINES]
+        return result_df
 
     def _parse_connections_dataframe_to_dict(self, df):
         """Parses the connections DataFrame to a dictionary that can be used
         as a parameter in Cypher query."""
         if df is None:
             self.db_logger.log_message(
-                """Parameters DataFrame is None. Make sure that the
-                '_build_connections_dataframe' method has been called before.""",
+                """Parameters DataFrame is None. Make sure that the '_build_separate_connections_dataframe'
+                and '_merge_separate_connections' methods have been called before.""",
                 __file__,
                 self.db_logger.LOG_TYPE_ERROR,
             )
@@ -102,12 +150,13 @@ class ConnectionsParser(FileParser):
         required for the creation of the connections.
         Requires passing the trips and stop_times DataFrames before
         (call 'pass_dataframes' method and pass them as the parameters)."""
-        connections_df = (
+        separate_connections_df = (
             self._join_source_dataframes()
             ._extract_only_necessary_columns()
-            ._build_connections_dataframe()
+            ._build_separate_connections_dataframe()
         )
-        params = self._parse_connections_dataframe_to_dict(connections_df)
+        merged_df = self._merge_separate_connections(separate_connections_df)
+        params = self._parse_connections_dataframe_to_dict(merged_df)
 
         if params is None:
             self.db_logger.log_message(
@@ -120,7 +169,7 @@ class ConnectionsParser(FileParser):
         query = f"""UNWIND $batch as row
         MATCH (from: {STOP_NODE_LABEL} {{{COL_STOP_ID}: row.{RESULT_COL_FROM_STOP}}})
         MATCH (to: {STOP_NODE_LABEL} {{{COL_STOP_ID}: row.{RESULT_COL_TO_STOP}}})
-        MERGE (from)-[:{STOP_CONNECTIONS_LABEL} {{line: row.{RESULT_COL_LINE}}}]->(to)"""
+        MERGE (from)-[:{STOP_CONNECTIONS_LABEL} {{{RESULT_COL_LINES}: row.{RESULT_COL_LINES}}}]->(to)"""  # noqa: E501
 
         return query, params
 
