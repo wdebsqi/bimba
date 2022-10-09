@@ -10,6 +10,15 @@ services:
       - ../ztm_files:/bimba/ztm_files
     env_file: .env
 
+  rest_api:
+    build:
+      context: ./src/
+      dockerfile: rest_api/Dockerfile
+    restart: on-failure
+    ports:
+      - "5001:5001"
+    env_file: .env
+
   db:
     image: postgres
     restart: on-failure

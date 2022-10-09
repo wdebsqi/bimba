@@ -1,0 +1,7 @@
+flask
+flask-migrate
+flask-sqlalchemy
+neo4j
+pandas
+psycopg2
+python-dotenv
