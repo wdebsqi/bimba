@@ -164,6 +164,33 @@ class Neo4jDBController:
         summary = result.consume()
         return Neo4jDBController._extract_values_from_counters(summary.counters)
 
+    def run_read_query(self, query: str, **params) -> list:
+        """Runs a provided read query with the optional parameters and returns the list of data."""
+        try:
+            with self.driver.session() as session:
+                result = session.read_transaction(self._run_read_query, query, params)
+                return result
+
+        except TransactionError as te:
+            self.db_logger.log_message(
+                f"Transaction error: {te} occured when trying to run a read query: {query}",
+                __file__,
+                self.db_logger.LOG_TYPE_ERROR,
+            )
+
+        except Exception as e:
+            self.db_logger.log_message(
+                f"Unidentified error: {e} occured when trying to run a read query: {query}",
+                __file__,
+                self.db_logger.LOG_TYPE_ERROR,
+            )
+
+    @staticmethod
+    def _run_read_query(tx, query: str, params: dict) -> list:
+        """Runs a provided read query with the optional parameters and returns the list of data."""
+        result = tx.run(query, params)
+        return result.value()
+
     @staticmethod
     def _extract_values_from_counters(
         counters: SummaryCounters, values_to_extract: list = None
