@@ -42,6 +42,10 @@ jobs:
           echo POSTGRES_DB="${{ secrets.POSTGRES_DB }}" >> .env
           echo POSTGRES_URL="${{ secrets.POSTGRES_URL }}" >> .env
           echo ZTM_FILES_DIRECTORY="${{ secrets.ZTM_FILES_DIRECTORY }}" >> .env
+
+      - name: Set up env variables from .env file
+        run: |
+          while read line; do export $line; done < .env
       
       - name: Test with PyTest
         run: |

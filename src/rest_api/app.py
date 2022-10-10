@@ -38,7 +38,11 @@ def find_path():
     try:
         return response_formatter.format_single_route_response(raw_route_data)
     except Exception as e:
-        db_logger.log_message(f"Unidentified error {e} encountered when formatting the response", __file__, db_logger.LOG_TYPE_ERROR)")
+        db_logger.log_message(
+            f"Unidentified error {e} encountered when formatting the response",
+            __file__,
+            db_logger.LOG_TYPE_ERROR,
+        )
         return 500
 
 
