@@ -1,3 +1,8 @@
-pandas
-requests
+flask 
+flask_migrate 
+flask_sqlalchemy 
 neo4j
+pandas 
+psycopg2 
+python-dotenv 
+requests 
