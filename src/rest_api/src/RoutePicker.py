@@ -57,7 +57,7 @@ class RoutePicker:
 
                 # pick the best line if continuing with the previous line unavailable
                 lines_chosen.append(
-                    self.line_picker.choose_best_line(lines_occurences, lines_available)
+                    self.line_picker.choose_most_occuring_line(lines_occurences, lines_available)
                 )
 
             # count the number of changes in the route
@@ -89,7 +89,7 @@ class RoutePicker:
 
         return result
 
-    def _count_lines_occurences(self, relationships: list[Relationship]) -> tuple:
+    def _count_lines_occurences(self, relationships: list[Relationship]) -> pd.Series:
         """Counts how many times each line occurs in the stops on the path
         and returns the Pandas Series sorted in descending order."""
         lines = [rel.get(RELATION_LINES_LABEL) for rel in relationships]

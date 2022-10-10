@@ -1,6 +1,8 @@
 from flask import request
 
-from . import app, response_formatter, route_picker
+from . import app, db_logger, response_formatter, route_picker
+
+db_logger.log_message("Starting the rest_api service", __file__, db_logger.LOG_TYPE_DEBUG)
 
 
 @app.route("/find_path", methods=["GET"])
@@ -15,9 +17,16 @@ def find_path():
     if type(data[start_point_key]) != str or type(data[end_point_key]) != str:
         return f"{start_point_key} parameter and {end_point_key} must be strings", 400
 
-    raw_route_data = route_picker.pick_best_route(
-        "name", start_point=data[start_point_key], end_point=data[end_point_key]
-    )
+    try:
+        raw_route_data = route_picker.pick_best_route(
+            "name", start_point=data[start_point_key], end_point=data[end_point_key]
+        )
+    except Exception as e:
+        db_logger.log_message(
+            f"Unidentified error {e} encountered when picking best route",
+            __file__,
+            db_logger.LOG_TYPE_ERROR,
+        )
 
     if not raw_route_data:
         return (
@@ -26,8 +35,16 @@ def find_path():
             400,
         )
 
-    return response_formatter.format_single_route_response(raw_route_data)
+    try:
+        return response_formatter.format_single_route_response(raw_route_data)
+    except Exception as e:
+        db_logger.log_message(
+            f"Unidentified error {e} encountered when formatting the response",
+            __file__,
+            db_logger.LOG_TYPE_ERROR,
+        )
+        return 500
 
 
 if __name__ == "__main__":
-    app.run()
+    app.run(host="0.0.0.0", port=5001)
