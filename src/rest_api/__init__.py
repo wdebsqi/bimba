@@ -21,8 +21,13 @@ path_finder = PathFinder(neo4j_controller, db_logger)
 route_picker = RoutePicker(path_finder, line_picker)
 response_formatter = ResponseFormatter()
 
-app = Flask(__name__)
-app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("POSTGRES_URL").replace("\\", "")
-app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-app.config["JSON_SORT_KEYS"] = False
-db = SQLAlchemy(app)
+db = SQLAlchemy()
+
+
+def create_app():
+    app = Flask(__name__)
+    app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("POSTGRES_URL").replace("\\", "")
+    app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+    app.config["JSON_SORT_KEYS"] = False
+    db.init_app(app)
+    return app

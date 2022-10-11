@@ -1,8 +1,8 @@
 from flask import request
 
-from . import app, db_logger, response_formatter, route_picker
+from . import create_app, db_logger, response_formatter, route_picker
 
-db_logger.log_message("Starting the rest_api service", __file__, db_logger.LOG_TYPE_DEBUG)
+app = create_app()
 
 
 @app.route("/find_path", methods=["GET"])
