@@ -24,6 +24,7 @@ jobs:
       - name: Create .env file
         run: |
           touch .env
+          echo HOST="${{ secrets.HOST }}" >> .env
           echo NEO4J_URL="${{ secrets.NEO4J_URL }}" >> .env
           echo NEO4J_USERNAME="${{ secrets.NEO4J_USERNAME }}" >> .env
           echo NEO4J_PASSWORD="${{ secrets.NEO4J_PASSWORD }}" >> .env
