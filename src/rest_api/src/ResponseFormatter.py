@@ -1,9 +1,7 @@
-from . import (
-    ROUTE_STATS_LINES_CHOSEN,
-    ROUTE_STATS_NUM_OF_CHANGES,
-    ROUTE_STATS_TOTAL_STOPS,
-    STOP_NAME,
-)
+ROUTE_STATS_LINES_CHOSEN = "lines_chosen"
+ROUTE_STATS_NUM_OF_CHANGES = "num_of_changes"
+ROUTE_STATS_TOTAL_STOPS = "total_stops"
+STOP_NAME = "stop_name"
 
 
 class ResponseFormatter:

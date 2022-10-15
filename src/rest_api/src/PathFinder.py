@@ -4,7 +4,11 @@ from neo4j.graph import Path
 
 from ...db.DBLogger import DBLogger
 from ...db.Neo4jDBController import Neo4jDBController
-from . import STOP_CODE, STOP_CONNECTIONS_LABEL, STOP_NAME, STOP_NODE_LABEL
+
+STOP_CODE = "stop_code"
+STOP_CONNECTIONS_LABEL = "commutes_to"
+STOP_NAME = "stop_name"
+STOP_NODE_LABEL = "STOP"
 
 
 class PathFinder:

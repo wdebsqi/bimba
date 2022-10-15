@@ -3,9 +3,12 @@ from typing import Literal
 import pandas as pd
 from neo4j.graph import Relationship
 
-from . import RELATION_LINES_LABEL, ROUTE_STATS_LINES_CHOSEN, ROUTE_STATS_NUM_OF_CHANGES
 from .LinePicker import LinePicker
 from .PathFinder import PathFinder
+
+RELATION_LINES_LABEL = "lines"
+ROUTE_STATS_LINES_CHOSEN = "lines_chosen"
+ROUTE_STATS_NUM_OF_CHANGES = "num_of_changes"
 
 
 class RoutePicker:
