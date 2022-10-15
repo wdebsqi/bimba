@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<form action="{{ url_for('route_found.route_found')}}" method="post">
+    <div class="mb-3">
+        <label for="startStopInput" class="form-label">Start stop name</label>
+        <input type="text" class="form-control" id="startStopInput" name="start_stop" placeholder="where do we start?">
+    </div>
+    <div class="mb-3">
+        <label for="endStopInput" class="form-label">End stop name</label>
+        <input type="text" class="form-control" id="endStopInput" name="end_stop" placeholder="where do we go?">
+    </div>
+    <button type="submit" class="btn btn-primary">Let's go</button>
+</form>
+
+{% endblock %}

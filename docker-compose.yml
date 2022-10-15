@@ -18,6 +18,15 @@ services:
     ports:
       - "5001:5001"
     env_file: .env
+  
+  web_app:
+    build:
+      context: ./src/
+      dockerfile: web_app/Dockerfile
+    restart: on-failure
+    ports:
+      - "5002:5002"
+    env_file: .env
 
   db:
     image: postgres

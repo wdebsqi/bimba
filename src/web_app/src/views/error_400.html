@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Error occured when trying to find a route from {{ start_stop }} to {{ end_stop }}</h1>
+<p>Possible explanations of the error:</p>
+<ol>
+    <li>You didn't fill "Start stop name" or "End stop name" field</li>
+    <li>At least one of the stops you passed is not a valid stop in Poznań</li>
+    <li>Other unidentified error. Feel free to report it to the author.</li>
+</ol>
+{% endblock %}
