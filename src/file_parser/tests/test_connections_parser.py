@@ -10,8 +10,6 @@ class TestConnectionsParser:
             trips_df=example_raw_trips_df, stop_times_df=example_raw_stop_times_df
         ).parse_dataframe_to_cypher_create_query()
 
-        print(batch)
-        print(connections_batch)
         assert batch == connections_batch
 
     def test_merging_separate_connections(self, connections_parser):
