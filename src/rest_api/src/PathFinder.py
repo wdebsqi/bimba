@@ -16,8 +16,10 @@ class PathFinder:
 
     Path is defined as `a sequence of nodes and relationships between them`."""
 
-    QUERY_ALL_SHORTEST_PATHS = """MATCH (start_node: $node_label {$node_param: '$start_node_param_value'})
-        MATCH (end_node: $node_label {$node_param: '$end_node_param_value'})
+    QUERY_ALL_SHORTEST_PATHS = """MATCH (start_node: $node_label)
+        MATCH (end_node: $node_label)
+        WHERE start_node.$node_param =~ '(?i)$start_node_param_value'
+            AND end_node.$node_param =~ '(?i)$end_node_param_value'
         MATCH p = allShortestPaths((start_node)-[r:$connection_label*]->(end_node))
         RETURN p"""
 
