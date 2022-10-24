@@ -9,7 +9,7 @@ db = SQLAlchemy()
 
 
 def create_app():
-    app = Flask(__name__, template_folder="src/views")
+    app = Flask(__name__, template_folder="src/views", static_folder="src/static")
     app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("POSTGRES_URL").replace("\\", "")
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
     app.config["JSON_SORT_KEYS"] = False

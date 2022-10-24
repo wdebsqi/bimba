@@ -6,7 +6,7 @@ from ..TypeValidator import TypeValidator
 bp = Blueprint("stops", __name__)
 
 
-@bp.route("/stops", methods=["GET"])
+@bp.route("/stops", methods=["GET", "POST"])
 def stops():
     data_key = "properties"
     distinct_key = "distinct"
