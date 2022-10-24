@@ -12,11 +12,14 @@ def stops():
     distinct_key = "distinct"
     ordered_key = "ordered"
     ordered_by_key = "ordered_by"
-    data = request.get_json()
+    data = request.get_json(silent=True)
     properties, distinct, ordered, ordered_by = None, None, None, None
 
+    if not data:
+        return "No data passed in request's body", 400
+
     if data_key not in data:
-        return f"Missing {data_key} parameter in request's form", 400
+        return f"Missing {data_key} parameter in request's body", 400
 
     if not TypeValidator.validate_type(data[data_key], list):
         return f"{data_key} parameter must contain a list", 400
@@ -29,6 +32,9 @@ def stops():
     properties_to_get = [
         property for property in properties if property in stops_getter.AVAILABLE_PROPERTIES
     ]
+
+    if len(properties_to_get) == 0:
+        return f"No valid properties passed in {data_key} parameter", 400
 
     if distinct_key in data:
         if not TypeValidator.validate_type(data[distinct_key], bool):
@@ -49,6 +55,8 @@ def stops():
                 properties_to_get, distinct=distinct, ordered=ordered, ordered_by=ordered_by
             )
         )
+    except (ValueError, TypeError) as e:
+        return f"Invalid data passed in request's body: {e}", 400
     except Exception as e:
         message = f"Unidentified error {e} encountered when getting all stops"
         db_logger.log_message(
