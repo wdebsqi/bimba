@@ -2,7 +2,6 @@ from typing import Literal
 
 from neo4j.graph import Path
 
-from ...db.DBLogger import DBLogger
 from ...db.Neo4jDBController import Neo4jDBController
 
 STOP_CODE = "stop_code"
@@ -23,9 +22,8 @@ class PathFinder:
         MATCH p = allShortestPaths((start_node)-[r:$connection_label*]->(end_node))
         RETURN p"""
 
-    def __init__(self, neo4j_controller: Neo4jDBController, db_logger: DBLogger) -> None:
+    def __init__(self, neo4j_controller: Neo4jDBController) -> None:
         self.neo4j_controller = neo4j_controller
-        self.db_logger = db_logger
 
     def find_all_shortest_paths(
         self, by: Literal["code", "name"], start_point: str, end_point: str
