@@ -31,16 +31,13 @@
 
 .form-input {
     width: 45%;
+    position: relative;
+    display: inline-block;
 }
 
 .form-main-submit {
     width: 40%;
     margin: auto;
-}
-
-.autocomplete {
-    position: relative;
-    display: inline-block;
 }
 
 .stops-items {
