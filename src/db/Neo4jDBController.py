@@ -164,11 +164,13 @@ class Neo4jDBController:
         summary = result.consume()
         return Neo4jDBController._extract_values_from_counters(summary.counters)
 
-    def run_read_query(self, query: str, **params) -> list:
+    def run_read_query(self, query: str, return_multiple_cols: bool = False, **params) -> list:
         """Runs a provided read query with the optional parameters and returns the list of data."""
         try:
             with self.driver.session() as session:
-                result = session.read_transaction(self._run_read_query, query, params)
+                result = session.read_transaction(
+                    self._run_read_query, query, params, return_multiple_cols
+                )
                 return result
 
         except TransactionError as te:
@@ -186,10 +188,10 @@ class Neo4jDBController:
             )
 
     @staticmethod
-    def _run_read_query(tx, query: str, params: dict) -> list:
+    def _run_read_query(tx, query: str, params: dict, return_multiple_cols: bool) -> list:
         """Runs a provided read query with the optional parameters and returns the list of data."""
         result = tx.run(query, params)
-        return result.value()
+        return result.values() if return_multiple_cols else result.value()
 
     @staticmethod
     def _extract_values_from_counters(
