@@ -27,8 +27,8 @@ def line_picker():
 
 
 @pytest.fixture(scope="module")
-def path_finder(neo4j_db_controller, db_logger):
-    return PathFinder(neo4j_db_controller, db_logger)
+def path_finder(neo4j_db_controller):
+    return PathFinder(neo4j_db_controller)
 
 
 @pytest.fixture(scope="module")
