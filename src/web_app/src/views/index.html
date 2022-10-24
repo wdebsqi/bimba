@@ -2,16 +2,21 @@
 
 {% block content %}
 
-<form action="{{ url_for('route_found.route_found')}}" method="post">
-    <div class="mb-3">
-        <label for="startStopInput" class="form-label">Start stop name</label>
-        <input type="text" class="form-control" id="startStopInput" name="start_stop" placeholder="where do we start?">
+<form action="{{ url_for('route_found.route_found')}}" method="post" autocomplete="off" class="form-container">
+    <div class="form-inputs">
+        <div class="mb-3 form-input">
+            <label for="startStopInput" class="form-label">Start stop name</label>
+            <input type="text" class="form-control" id="startStopInput" name="start_stop"
+                placeholder="where do we start?">
+        </div>
+        <div class="mb-3 form-input">
+            <label for="endStopInput" class="form-label">End stop name</label>
+            <input type="text" class="form-control" id="endStopInput" name="end_stop" placeholder="where do we go?">
+        </div>
     </div>
-    <div class="mb-3">
-        <label for="endStopInput" class="form-label">End stop name</label>
-        <input type="text" class="form-control" id="endStopInput" name="end_stop" placeholder="where do we go?">
-    </div>
-    <button type="submit" class="btn btn-primary">Let's go</button>
+    <button type="submit" class="btn btn-primary form-main-submit">Let's go</button>
 </form>
+
+<script type="application/javascript" charset="utf-8" src="{{ url_for('static', filename='main.js') }}"></script>
 
 {% endblock %}
