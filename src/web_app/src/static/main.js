@@ -1,3 +1,26 @@
+class FormValidator {
+    validateInputs(startStopInput, endStopInput, stops) {
+        return this.#validateIfNotEmpty(startStopInput)
+            && this.#validateIfNotEmpty(endStopInput)
+            && this.#validateIfStopExists(startStopInput, stops)
+            && this.#validateIfStopExists(endStopInput, stops)
+            && this.#validateIfNotTheSameStops(startStopInput, endStopInput)
+    }
+
+    #validateIfNotEmpty(stopInput) {
+        return stopInput.value.length > 0
+    }
+
+    #validateIfStopExists(stopInput, stops) { 
+        return stops.map(stopName => stopName.toLowerCase())
+            .includes(stopInput.value.toLowerCase())
+    }
+    
+    #validateIfNotTheSameStops(startStop, endStop) {
+        return startStop.value.toLowerCase() !== endStop.value.toLowerCase()
+    }
+}
+
 function getStops() {
     // Gets available stops data from the REST API
 
@@ -19,7 +42,7 @@ function getStops() {
 }
     fetch(`${HOST}:${REST_API_PORT}/stops`, options)
         .then(res => res.json())
-        .then(d => { stops = d})
+        .then(d => { stops = d })
 };
 
 function clearInput(inputVal) {
@@ -148,6 +171,8 @@ getStops()
 
 const startStopInput = document.getElementById('startStopInput')
 const endStopInput = document.getElementById('endStopInput')
+const submitButton = document.getElementById('form-main-submit')
+const formValidator = new FormValidator()
 
 startStopInput.addEventListener('input', () => {
     updateStopsList(startStopInput)
@@ -160,6 +185,14 @@ startStopInput.addEventListener('keydown', function (e) {
 })
 endStopInput.addEventListener('keydown', function (e) {
     moveOnStopsList(endStopInput, e)
+})
+submitButton.addEventListener('click', function(e) {
+    if (stops.length > 0 && formValidator.validateInputs(startStopInput, endStopInput, stops)) {
+        submitButton.click()
+    } else {
+        e.preventDefault()
+        alert('Please enter valid stop names.')
+    }
 })
 
 document.addEventListener('click', removeOpenLists)
