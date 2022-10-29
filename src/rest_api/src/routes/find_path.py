@@ -11,11 +11,15 @@ def find_path():
     end_point_key = "end_point"
 
     data = request.form
+
     if start_point_key not in data or end_point_key not in data:
         return f"Missing {start_point_key} or {end_point_key} parameter in request's form", 400
 
     if type(data[start_point_key]) != str or type(data[end_point_key]) != str:
         return f"{start_point_key} parameter and {end_point_key} must be strings", 400
+
+    if data[start_point_key].lower() == data[end_point_key].lower():
+        return "Start point and end point must be different", 400
 
     try:
         raw_route_data = route_picker.pick_best_route(
