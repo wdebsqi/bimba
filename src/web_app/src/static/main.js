@@ -152,8 +152,20 @@ const endStopInput = document.getElementById('endStopInput')
 startStopInput.addEventListener('input', () => {
     updateStopsList(startStopInput)
 })
+startStopInput.addEventListener('touchstart', () => {
+    updateStopsList(startStopInput)
+})
+startStopInput.addEventListener('touchend', () => {
+    updateStopsList(startStopInput)
+})
 endStopInput.addEventListener('input', () => {
     updateStopsList(endStopInput)
+})
+endStopInput.addEventListener('touchstart', () => {
+    updateStopsList(startStopInput)
+})
+endStopInput.addEventListener('touchend', () => {
+    updateStopsList(startStopInput)
 })
 startStopInput.addEventListener('keydown', function (e) {
     moveOnStopsList(startStopInput, e)
