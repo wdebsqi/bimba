@@ -33,14 +33,13 @@ class TestRestApi:
                     == 200
                 )
 
-    def test_find_path_endpoint_invalid_requests(self, client, invalid_stop_names):
+    def test_find_path_endpoint_invalid_requests(
+        self, client, invalid_stop_names, valid_stop_names
+    ):
         assert client.get(self.FIND_PATH_ROUTE).status_code == 400
 
         for start_stop in invalid_stop_names:
             for end_stop in invalid_stop_names:
-                if start_stop == end_stop:
-                    continue
-
                 assert (
                     client.get(
                         self.FIND_PATH_ROUTE,
@@ -51,6 +50,21 @@ class TestRestApi:
                     ).status_code
                     == 400
                 )
+
+        # also checking valid stops but only in case when the start and end stops are the same
+        for start_stop in valid_stop_names:
+            for end_stop in valid_stop_names:
+                if start_stop == end_stop:
+                    assert (
+                        client.get(
+                            self.FIND_PATH_ROUTE,
+                            data={
+                                self.FIND_PATH_START_POINT: start_stop,
+                                self.FIND_PATH_END_POINT: end_stop,
+                            },
+                        ).status_code
+                        == 400
+                    )
 
     def test_stops_endpoint_valid_requests(self, client):
         valid_jsons = [
