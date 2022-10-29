@@ -35,7 +35,7 @@
     display: inline-block;
 }
 
-.form-main-submit {
+#form-main-submit {
     width: 40%;
     margin: auto;
 }
