@@ -5,24 +5,32 @@
 <h2>Total number of stops: <b>{{ total_stops }}</b></h2>
 <h2>Number of changes: <b>{{ num_of_changes }}</b></h2>
 <h2>Your route:</h2>
-<table class="table">
-    <thead>
-        <tr>
-            <th scope="col">#</th>
-            <th scope="col">From stop</th>
-            <th scope="col">To stop</th>
-            <th scope="col">Line</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for i in range(route|length) %}
-        <tr>
-            <td scope="row">{{ i }}</td>
-            <td scope="row">{{ route[i]['start_node'] }}</td>
-            <td scope="row">{{ route[i]['end_node'] }}</td>
-            <td scope="row">{{ route[i]['line_chosen'] }}</td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+<div class="route-container">
+    <table class="table table-sm" id="route-table">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">From stop</th>
+                <th scope="col">To stop</th>
+                <th scope="col">Line</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for i in range(route|length) %}
+            <tr>
+                <td scope="row">{{ i + 1 }}</td>
+                <td scope="row">{{ route[i]['start_node'] }}</td>
+                <td scope="row">{{ route[i]['end_node'] }}</td>
+                <td scope="row">{{ route[i]['line_chosen'] }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <div id="map-container">
+    </div>
+</div>
+<script type="text/javascript" charset="utf-8" src="{{ url_for('static', filename='MapBuilder.js') }}"></script>
+<script>
+    new MapBuilder({{ locations | tojson }}).buildMap()
+</script>
 {% endblock %}

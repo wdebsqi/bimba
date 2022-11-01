@@ -23,6 +23,7 @@ def route_found():
             num_of_changes = response_dict["num_of_changes"]
             total_stops = response_dict["total_stops"]
             route = response_dict["route"]
+            locations = response_dict["locations"]
             return render_template(
                 "route_found.html",
                 start_stop=start_stop,
@@ -30,6 +31,7 @@ def route_found():
                 num_of_changes=num_of_changes,
                 total_stops=total_stops,
                 route=route,
+                locations=locations,
             )
 
         return redirect(url_for("error_400.error_400", start_stop=start_stop, end_stop=end_stop))

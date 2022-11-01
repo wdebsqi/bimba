@@ -5,7 +5,7 @@
     flex-direction: column;
     width: 90%;
     margin: auto;
-    margin-bottom: 40px;
+    margin-bottom: 60px;
 }
 
 .form-container {
@@ -65,4 +65,31 @@
 .stop-item-active {
     background-color: #0d6efd !important;
     color: #ffffff;
+}
+
+.route-container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    width: 100%;
+    max-width: 2000px;
+}
+
+#route-table {
+    flex: 1;
+    table-layout: fixed;
+    word-wrap: break-word;
+    min-width: 300px;
+    max-width: 1000px;
+}
+
+#map-container {
+    flex: 3;
+    border: 1px solid black;
+    min-height: 300px;
+    max-height: 600px;
+    min-width: 300px;
+    max-width: 1000px;
+    margin-left: 30px;
+    margin-right: 30px;
 }
