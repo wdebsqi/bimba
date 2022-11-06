@@ -1,5 +1,6 @@
 class FormValidator {
-    validateInputs(startStopInput, endStopInput, stops) {
+    validateInputs(startStopInput, endStopInput, stopsData) {
+        let stops = stopsData.map(stopData => stopData[0])
         return this.#validateIfNotEmpty(startStopInput)
             && this.#validateIfNotEmpty(endStopInput)
             && this.#validateIfStopExists(startStopInput, stops)
@@ -34,15 +35,15 @@ function getStops() {
             'Access-Control-Allow-Origin': '*'
         },
         body: JSON.stringify({
-            'properties': ['stop_name'],
+            'properties': ['stop_name', 'zone_id'],
             'distinct': true,
             'ordered': true,
-            'ordered_by': ['stop_name']
+            'ordered_by': ['stop_name', 'zone_id']
         })
 }
     fetch(`${HOST}:${REST_API_PORT}/stops`, options)
         .then(res => res.json())
-        .then(d => { stops = d })
+        .then(data => { stopsData = data })
 };
 
 function clearInput(inputVal) {
@@ -65,7 +66,7 @@ function filterStops(stopsArr, inputVal) {
     let inputValClean = clearInput(inputVal).replace('.', '\\.')
     // inputValClean = inputValClean.replace('.', '\\.')
     let re = new RegExp(inputValClean, 'gmi')
-    return stopsArr.filter(name => name.match(re))
+    return stopsArr.filter(stopData => stopData[0].match(re))
 }
 
 function removeOpenLists() {
@@ -119,7 +120,7 @@ function updateStopsList(inputField) {
 
     removeOpenLists()
     if (inputField.value.length >= 3) {
-        let filteredStops = filterStops(stops, inputField.value)
+        let filteredStops = filterStops(stopsData, inputField.value)
 
         let stopsListDiv = document.createElement('div')
         stopsListDiv.setAttribute('id', inputField.id + '-stops-list')
@@ -129,8 +130,9 @@ function updateStopsList(inputField) {
 
         for (i = 0; i < filteredStops.length; i++) {
             let stopDiv = document.createElement('div')
-            stopDiv.innerHTML += modifyMatchedText(filteredStops[i], inputField.value)
-            stopDiv.innerHTML += '<input type="hidden" value="' + filteredStops[i] + '">'
+            stopDiv.innerHTML += `<span class="stop-name">${modifyMatchedText(filteredStops[i][0], inputField.value)}</span>`
+            stopDiv.innerHTML += '<span class="stop-zone">' + filteredStops[i][1] + '</span>'
+            stopDiv.innerHTML += '<input type="hidden" value="' + filteredStops[i][0] + '">'
             stopDiv.addEventListener('click', function (e) {
                 inputField.value = this.getElementsByTagName('input')[0].value
                 removeOpenLists()
@@ -164,7 +166,7 @@ function moveOnStopsList(inputField, event) {
     }
 }
 
-let stops = []
+let stopsData = []
 let currentFocus = null
 let tmp = null
 getStops()
@@ -198,8 +200,8 @@ startStopInput.addEventListener('keydown', function (e) {
 endStopInput.addEventListener('keydown', function (e) {
     moveOnStopsList(endStopInput, e)
 })
-submitButton.addEventListener('click', function(e) {
-    if (stops.length > 0 && formValidator.validateInputs(startStopInput, endStopInput, stops)) {
+submitButton.addEventListener('click', function (e) {
+    if (stopsData.length > 0 && formValidator.validateInputs(startStopInput, endStopInput, stopsData)) {
         submitButton.click()
     } else {
         e.preventDefault()
