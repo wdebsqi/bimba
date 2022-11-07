@@ -1,6 +1,6 @@
 from flask import Flask
 
-from ..src.StopsGetter import STOP_CODE, STOP_LAT, STOP_LON, STOP_NAME, STOP_ZONE
+from ...db.models.neo4j import Stop
 
 
 class TestRestApi:
@@ -69,19 +69,19 @@ class TestRestApi:
     def test_stops_endpoint_valid_requests(self, client):
         valid_jsons = [
             {
-                self.STOPS_ROUTE_REQUEST_BODY_KEY_PROPERTIES: [STOP_CODE, STOP_LON],
+                self.STOPS_ROUTE_REQUEST_BODY_KEY_PROPERTIES: [Stop.CODE, Stop.LON],
             },
             {
-                self.STOPS_ROUTE_REQUEST_BODY_KEY_PROPERTIES: [STOP_NAME],
+                self.STOPS_ROUTE_REQUEST_BODY_KEY_PROPERTIES: [Stop.NAME],
                 self.STOPS_ROUTE_REQUEST_BODY_KEY_DISTINCT: True,
                 self.STOPS_ROUTE_REQUEST_BODY_KEY_ORDERED: True,
-                self.STOPS_ROUTE_REQUEST_BODY_KEY_ORDERED_BY: [STOP_NAME],
+                self.STOPS_ROUTE_REQUEST_BODY_KEY_ORDERED_BY: [Stop.NAME],
             },
             {
-                self.STOPS_ROUTE_REQUEST_BODY_KEY_PROPERTIES: [STOP_NAME, STOP_LAT, STOP_ZONE],
+                self.STOPS_ROUTE_REQUEST_BODY_KEY_PROPERTIES: [Stop.NAME, Stop.LAT, Stop.ZONE],
                 self.STOPS_ROUTE_REQUEST_BODY_KEY_DISTINCT: True,
                 self.STOPS_ROUTE_REQUEST_BODY_KEY_ORDERED: True,
-                self.STOPS_ROUTE_REQUEST_BODY_KEY_ORDERED_BY: [STOP_ZONE, STOP_NAME],
+                self.STOPS_ROUTE_REQUEST_BODY_KEY_ORDERED_BY: [Stop.ZONE, Stop.NAME],
             },
         ]
 
@@ -97,10 +97,10 @@ class TestRestApi:
             {self.STOPS_ROUTE_REQUEST_BODY_KEY_PROPERTIES: []},
             {self.STOPS_ROUTE_REQUEST_BODY_KEY_PROPERTIES: ["not", "real", "properties"]},
             {
-                self.STOPS_ROUTE_REQUEST_BODY_KEY_PROPERTIES: [STOP_NAME],
+                self.STOPS_ROUTE_REQUEST_BODY_KEY_PROPERTIES: [Stop.NAME],
                 self.STOPS_ROUTE_REQUEST_BODY_KEY_DISTINCT: True,
                 self.STOPS_ROUTE_REQUEST_BODY_KEY_ORDERED: True,
-                self.STOPS_ROUTE_REQUEST_BODY_KEY_ORDERED_BY: [STOP_CODE],
+                self.STOPS_ROUTE_REQUEST_BODY_KEY_ORDERED_BY: [Stop.CODE],
             },
         ]
 

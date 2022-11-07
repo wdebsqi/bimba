@@ -2,7 +2,7 @@ from datetime import datetime
 
 import pandas as pd
 
-from ..file_parser.src import STOP_CONNECTIONS_LABEL, STOP_NODE_LABEL
+from ..db.models.neo4j import CommutesTo, Stop
 from . import (
     ZTM_FILES_DIRECTORY,
     ZTM_FILES_ENDPOINT,
@@ -55,7 +55,7 @@ while True:
 
         # parsing stops
         query = stops_parser.parse_dataframe_to_cypher_create_query(stops_df)
-        neo4j_controller.remove_all_nodes(STOP_NODE_LABEL)
+        neo4j_controller.remove_all_nodes(Stop.LABEL)
         result = neo4j_controller.run_write_query(query)
         if result:
             db_logger.log_message(
@@ -66,7 +66,7 @@ while True:
         query, batch = connections_parser.pass_dataframes(
             trips_df=trips_df, stop_times_df=stop_times_df
         ).parse_dataframe_to_cypher_create_query()
-        neo4j_controller.remove_all_connections(STOP_CONNECTIONS_LABEL)
+        neo4j_controller.remove_all_connections(CommutesTo.LABEL)
         result = neo4j_controller.run_write_query(query, batch=batch)
         if result:
             db_logger.log_message(
