@@ -1,2 +1,0 @@
-STOP_NODE_LABEL = "STOP"
-STOP_CONNECTIONS_LABEL = "commutes_to"

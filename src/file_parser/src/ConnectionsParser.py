@@ -1,7 +1,7 @@
 import pandas as pd
 
 from ...db.DBLogger import DBLogger
-from . import STOP_CONNECTIONS_LABEL, STOP_NODE_LABEL
+from ...db.models.neo4j import CommutesTo, Stop
 from .FileParser import FileParser
 
 COL_ROUTE_ID = "route_id"
@@ -167,9 +167,9 @@ class ConnectionsParser(FileParser):
             )
             return None
         query = f"""UNWIND $batch as row
-        MATCH (from: {STOP_NODE_LABEL} {{{COL_STOP_ID}: row.{RESULT_COL_FROM_STOP}}})
-        MATCH (to: {STOP_NODE_LABEL} {{{COL_STOP_ID}: row.{RESULT_COL_TO_STOP}}})
-        MERGE (from)-[:{STOP_CONNECTIONS_LABEL} {{{RESULT_COL_LINES}: row.{RESULT_COL_LINES}}}]->(to)"""  # noqa: E501
+        MATCH (from: {Stop.LABEL} {{{COL_STOP_ID}: row.{RESULT_COL_FROM_STOP}}})
+        MATCH (to: {Stop.LABEL} {{{COL_STOP_ID}: row.{RESULT_COL_TO_STOP}}})
+        MERGE (from)-[:{CommutesTo.LABEL} {{{RESULT_COL_LINES}: row.{RESULT_COL_LINES}}}]->(to)"""  # noqa: E501
 
         return query, params
 
