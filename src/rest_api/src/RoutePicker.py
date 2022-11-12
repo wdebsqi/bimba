@@ -3,12 +3,14 @@ from typing import Literal
 import pandas as pd
 from neo4j.graph import Relationship
 
+from .LineClassifier import LineClassifier
 from .LinePicker import LinePicker
 from .PathFinder import PathFinder
 
 RELATION_LINES_LABEL = "lines"
 ROUTE_STATS_LINES_CHOSEN = "lines_chosen"
 ROUTE_STATS_NUM_OF_CHANGES = "num_of_changes"
+ROUTE_STATS_NUM_OF_STOPS = "num_of_stops"
 
 
 class RoutePicker:
@@ -22,7 +24,12 @@ class RoutePicker:
         self.line_picker = line_picker
 
     def pick_best_route(
-        self, by: Literal["code", "name"], start_point: str, end_point: str
+        self,
+        by: Literal["code", "name"],
+        start_point: str,
+        end_point: str,
+        include_daytime: bool,
+        include_nighttime: bool,
     ) -> dict:
         """Finds all paths between start_point and end_point using allShortestPaths
         algorithm, processes them and returns a dictionary looking like this:
@@ -33,19 +40,52 @@ class RoutePicker:
             "num_of_changes": <total number of changes in the route>
         }
         ```"""
-        all_shortest_paths = self.path_finder.find_all_shortest_paths(
+        shortest_path_len = self.path_finder.find_shortest_path_len(
             by=by, start_point=start_point, end_point=end_point
         )
 
-        if not all_shortest_paths:
+        if not shortest_path_len:
+            shortest_path_len = 1
+
+        paths = self.path_finder.find_shortest_paths(
+            approach="allShortestPaths",
+            by=by,
+            start_point=start_point,
+            end_point=end_point,
+            include_daytime=include_daytime,
+            include_nighttime=include_nighttime,
+        )
+
+        if not paths:
+            paths = self.path_finder.find_shortest_paths(
+                approach="naive",
+                by=by,
+                start_point=start_point,
+                end_point=end_point,
+                include_daytime=include_daytime,
+                include_nighttime=include_nighttime,
+                min_len=shortest_path_len,
+            )
+
+        if not paths:
             return None
 
-        routes_data = dict.fromkeys(all_shortest_paths)
+        routes_data = dict.fromkeys(paths)
 
         # iterates through every path
-        for path in all_shortest_paths:
+        for path in paths:
             lines_chosen = []
             lines_occurences = self._count_lines_occurences(path.relationships)
+
+            if not include_daytime:
+                lines_occurences = lines_occurences[
+                    [LineClassifier.is_night_line(line) for line in lines_occurences.index]
+                ]
+
+            if not include_nighttime:
+                lines_occurences = lines_occurences[
+                    [not LineClassifier.is_night_line(line) for line in lines_occurences.index]
+                ]
 
             for i, rel in enumerate(path.relationships):
                 lines_available = rel.get(RELATION_LINES_LABEL)
@@ -70,6 +110,7 @@ class RoutePicker:
             route_data = {
                 ROUTE_STATS_LINES_CHOSEN: lines_chosen,
                 ROUTE_STATS_NUM_OF_CHANGES: num_of_changes,
+                ROUTE_STATS_NUM_OF_STOPS: len(lines_chosen),
             }
             routes_data[path] = route_data
 
@@ -83,6 +124,10 @@ class RoutePicker:
             if (
                 result is None
                 or data[ROUTE_STATS_NUM_OF_CHANGES] < result[ROUTE_STATS_NUM_OF_CHANGES]
+                or (
+                    data[ROUTE_STATS_NUM_OF_CHANGES] == result[ROUTE_STATS_NUM_OF_CHANGES]
+                    and len(data[ROUTE_STATS_LINES_CHOSEN]) < len(result[ROUTE_STATS_LINES_CHOSEN])
+                )
             ):
                 result = {
                     "path": path,
