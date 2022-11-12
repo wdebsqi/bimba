@@ -19,8 +19,13 @@ class TestPathFinder:
 
                 start_stop_random_case = self._randomize_string_case(start_stop)
                 end_stop_random_case = self._randomize_string_case(end_stop)
-                path = path_finder.find_all_shortest_paths(
-                    "name", start_stop_random_case, end_stop_random_case
+                path = path_finder.find_shortest_paths(
+                    "allShortestPaths",
+                    "name",
+                    start_stop_random_case,
+                    end_stop_random_case,
+                    True,
+                    False,
                 )
                 assert isinstance(path, list)
                 assert len(path) > 0
@@ -30,6 +35,8 @@ class TestPathFinder:
             for end_stop in invalid_stop_names:
                 if start_stop == end_stop:
                     continue
-                path = path_finder.find_all_shortest_paths("name", start_stop, end_stop)
+                path = path_finder.find_shortest_paths(
+                    "allShortestPaths", "name", start_stop, end_stop, True, False
+                )
                 assert isinstance(path, list)
                 assert len(path) == 0
