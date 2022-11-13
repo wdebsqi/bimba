@@ -8,15 +8,19 @@ class FormValidator {
             && this.#validateIfNotTheSameStops(startStopInput, endStopInput)
     }
 
+    validateCheckboxes(includeDayLinesCheckbox, includeNightLinesCheckbox) {
+        return includeDayLinesCheckbox.checked || includeNightLinesCheckbox.checked
+    }
+
     #validateIfNotEmpty(stopInput) {
         return stopInput.value.length > 0
     }
 
-    #validateIfStopExists(stopInput, stops) { 
+    #validateIfStopExists(stopInput, stops) {
         return stops.map(stopName => stopName.toLowerCase())
             .includes(stopInput.value.toLowerCase())
     }
-    
+
     #validateIfNotTheSameStops(startStop, endStop) {
         return startStop.value.toLowerCase() !== endStop.value.toLowerCase()
     }
@@ -40,7 +44,7 @@ function getStops() {
             'ordered': true,
             'ordered_by': ['stop_name', 'zone_id']
         })
-}
+    }
     fetch(`${HOST}:${REST_API_PORT}/stops`, options)
         .then(res => res.json())
         .then(data => { stopsData = data })
@@ -71,7 +75,7 @@ function filterStops(stopsArr, inputVal) {
 
 function removeOpenLists() {
     // Removes input lists from the DOM
-    
+
     currentFocus = -1
     let stopsItems = document.getElementsByClassName('stops-items')
     for (let i = 0; i < stopsItems.length; i++) {
@@ -89,15 +93,15 @@ function modifyMatchedText(text, pattern) {
     let endIdx = startIdx + pattern.length - 1
 
     return text.slice(0, startIdx)
-            + '<u>'
-            + text.slice(startIdx, endIdx + 1)
-            + '</u>'
-            + text.slice(endIdx + 1, text.length)
+        + '<u>'
+        + text.slice(startIdx, endIdx + 1)
+        + '</u>'
+        + text.slice(endIdx + 1, text.length)
 }
 
 function markActive(stopItems) {
     // Marks the active item in the stops list
-    
+
     if (!stopItems) return false
     unmarkActive(stopItems)
 
@@ -144,7 +148,7 @@ function updateStopsList(inputField) {
 
 function moveOnStopsList(inputField, event) {
     // Moves up and down the stops list. Also allows selecting and closing the list
-    
+
     let stopItems = document.getElementById(inputField.id + '-stops-list')
     if (stopItems) {
         stopItems = stopItems.getElementsByTagName("div")
@@ -173,6 +177,8 @@ getStops()
 
 const startStopInput = document.getElementById('startStopInput')
 const endStopInput = document.getElementById('endStopInput')
+const includeDayLinesCheckbox = document.getElementById('includeDayLines')
+const includeNightLinesCheckbox = document.getElementById('includeNightLines')
 const submitButton = document.getElementById('form-main-submit')
 const formValidator = new FormValidator()
 
@@ -201,11 +207,14 @@ endStopInput.addEventListener('keydown', function (e) {
     moveOnStopsList(endStopInput, e)
 })
 submitButton.addEventListener('click', function (e) {
-    if (stopsData.length > 0 && formValidator.validateInputs(startStopInput, endStopInput, stopsData)) {
-        submitButton.click()
-    } else {
+    if (stopsData.length == 0 || !formValidator.validateInputs(startStopInput, endStopInput, stopsData)) {
         e.preventDefault()
         alert('Please enter valid stop names.')
+    } else if (!formValidator.validateCheckboxes(includeDayLinesCheckbox, includeNightLinesCheckbox)) {
+        e.preventDefault()
+        alert('Please check at least one of the time-related checkboxes.')
+    } else {
+        submitButton.click()
     }
 })
 
