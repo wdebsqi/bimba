@@ -12,10 +12,18 @@ def route_found():
     try:
         start_stop = request.form.get("start_stop")
         end_stop = request.form.get("end_stop")
+        include_day_lines = bool(request.form.get("include_day_lines"))
+        include_night_lines = bool(request.form.get("include_night_lines"))
+        data = {
+            "start_point": start_stop,
+            "end_point": end_stop,
+            "include_daytime_lines": include_day_lines,
+            "include_nighttime_lines": include_night_lines,
+        }
 
         response = requests.get(
             "http://" + os.getenv("HOST") + ":5001/find_path",
-            data={"start_point": start_stop, "end_point": end_stop},
+            data=data,
         )
 
         if response.status_code == 200:
