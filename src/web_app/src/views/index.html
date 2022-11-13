@@ -14,6 +14,20 @@
             <input type="text" class="form-control" id="endStopInput" name="end_stop" placeholder="where do we go?">
         </div>
     </div>
+    <div class="form-checkboxes">
+        <div class="form-check">
+            <input class="form-check-input" type="checkBox" value="true" id="includeDayLines" name="include_day_lines"
+                checked>
+            <label class="form-check-label" for="includeDayLines">
+                Include day lines</label>
+        </div>
+        <div class="form-check">
+            <input class="form-check-input" type="checkBox" value="true" id="includeNightLines"
+                name="include_night_lines">
+            <label class="form-check-label" for="includeNightLines">
+                Include night lines</label>
+        </div>
+    </div>
     <button type="submit" class="btn btn-primary" id="form-main-submit">Let's go</button>
 </form>
 <script type="text/javascript" charset="utf-8" src="{{ url_for('static', filename='main.js') }}"></script>

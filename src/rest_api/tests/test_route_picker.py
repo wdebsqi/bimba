@@ -4,7 +4,7 @@ class TestRoutePicker:
             for end_stop in valid_stop_names:
                 if start_stop == end_stop:
                     continue
-                route = route_picker.pick_best_route("name", start_stop, end_stop)
+                route = route_picker.pick_best_route("name", start_stop, end_stop, True, False)
                 assert isinstance(route, dict)
                 assert route
 
@@ -13,5 +13,5 @@ class TestRoutePicker:
             for end_stop in invalid_stop_names:
                 if start_stop == end_stop:
                     continue
-                route = route_picker.pick_best_route("name", start_stop, end_stop)
+                route = route_picker.pick_best_route("name", start_stop, end_stop, True, False)
                 assert not route

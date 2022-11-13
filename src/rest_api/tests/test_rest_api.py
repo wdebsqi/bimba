@@ -7,6 +7,8 @@ class TestRestApi:
     FIND_PATH_ROUTE = "/find_path"
     FIND_PATH_START_POINT = "start_point"
     FIND_PATH_END_POINT = "end_point"
+    FIND_PATH_INCLUDE_DAYTIME = "include_daytime_lines"
+    FIND_PATH_INCLUDE_NIGHTTIME = "include_nighttime_lines"
     STOPS_ROUTE = "/stops"
     STOPS_ROUTE_REQUEST_BODY_KEY_PROPERTIES = "properties"
     STOPS_ROUTE_REQUEST_BODY_KEY_DISTINCT = "distinct"
@@ -28,6 +30,8 @@ class TestRestApi:
                         data={
                             self.FIND_PATH_START_POINT: start_stop,
                             self.FIND_PATH_END_POINT: end_stop,
+                            self.FIND_PATH_INCLUDE_DAYTIME: True,
+                            self.FIND_PATH_INCLUDE_NIGHTTIME: False,
                         },
                     ).status_code
                     == 200
@@ -46,6 +50,8 @@ class TestRestApi:
                         data={
                             self.FIND_PATH_START_POINT: start_stop,
                             self.FIND_PATH_END_POINT: end_stop,
+                            self.FIND_PATH_INCLUDE_DAYTIME: True,
+                            self.FIND_PATH_INCLUDE_NIGHTTIME: False,
                         },
                     ).status_code
                     == 400
