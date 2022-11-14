@@ -1,5 +1,6 @@
 import os
 
+from ..db.DBConnector import DBConnector
 from ..db.DBLogger import DBLogger
 from ..db.Neo4jDBController import Neo4jDBController
 from .src.ConnectionsParser import ConnectionsParser
@@ -23,7 +24,8 @@ ZONE_TO_INCLUDE = "A"
 ZTM_FILES_DIRECTORY = os.getenv("ZTM_FILES_DIRECTORY") if os.getenv("ZTM_FILES_DIRECTORY") else ""
 ZTM_FILES_ENDPOINT = "https://www.ztm.poznan.pl/pl/dla-deweloperow/getGTFSFile"
 
-db_logger = DBLogger()
+db_connector = DBConnector()
+db_logger = DBLogger(db_connector)
 neo4j_controller = Neo4jDBController(NEO4J_URL, NEO4J_USERNAME, NEO4J_PASSWORD, db_logger)
 file_processor = FileProcessor(db_logger)
 stops_parser = StopsParser()

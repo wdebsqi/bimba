@@ -1,8 +1,9 @@
 import os
+
 import requests
 from flask import Blueprint, redirect, render_template, request, url_for
 
-from .. import db_logger
+from .. import db_logger, request_logger
 
 bp = Blueprint("route_found", __name__)
 
@@ -26,6 +27,7 @@ def route_found():
             data=data,
         )
 
+        request_logger.log_request(request)
         if response.status_code == 200:
             response_dict = response.json()
             num_of_changes = response_dict["num_of_changes"]
