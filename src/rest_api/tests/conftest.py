@@ -1,5 +1,6 @@
 import pytest
 
+from ...db.DBConnector import DBConnector
 from ...db.DBLogger import DBLogger
 from ...db.Neo4jDBController import Neo4jDBController
 from .. import create_app
@@ -10,8 +11,13 @@ from . import NEO4J_PASSWORD, NEO4J_URL, NEO4J_USERNAME
 
 
 @pytest.fixture(scope="module")
+def db_connector():
+    return DBConnector()
+
+
+@pytest.fixture(scope="module")
 def db_logger():
-    return DBLogger()
+    return DBLogger(db_connector)
 
 
 @pytest.fixture(scope="module")
