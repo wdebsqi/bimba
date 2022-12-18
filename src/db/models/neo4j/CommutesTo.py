@@ -8,16 +8,14 @@ LINES = "lines"
 
 
 class CommutesTo(Relationship):
-    def __init__(self, from_stop: Stop, lines: list, to_stop: Stop):
-        super().__init__()
+    def __init__(self, from_node: Stop, to_node: Stop, lines: list):
+        super().__init__(from_node, to_node)
         self.label = LABEL
         self.properties = {LINES: lines}
-        self.from_stop = from_stop
-        self.to_stop = to_stop
 
     def __repr__(self):
         return (
-            f"({self.from_stop.properties[STOP_ID]}, {self.from_stop.properties[STOP_NAME]})"
+            f"({self.from_node.properties[STOP_ID]}, {self.from_node.properties[STOP_NAME]})"
             + f"-[:{self.label}]->"
-            + f"({self.to_stop.properties[STOP_ID]}, {self.to_stop.properties[STOP_NAME]})"
+            + f"({self.to_node.properties[STOP_ID]}, {self.to_node.properties[STOP_NAME]})"
         )

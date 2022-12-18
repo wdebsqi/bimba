@@ -1,4 +1,4 @@
-name: Build and test Python app on Pull Request
+name: Build and test
 
 env:
   PYTHON_VERSION: '3.10'

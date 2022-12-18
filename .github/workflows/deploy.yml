@@ -1,4 +1,4 @@
-name: Deploy Python app to VPS
+name: Deploy to production
 
 env:
   PYTHON_VERSION: '3.10'

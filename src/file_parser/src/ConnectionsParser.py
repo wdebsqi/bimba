@@ -56,7 +56,7 @@ class ConnectionsParser(FileParser):
             self.source_dataframe = self.source_dataframe[COLS_SOURCE_DF]
         return self
 
-    def _build_separate_connections_dataframe(self):
+    def _build_separate_connections_dataframe(self) -> pd.DataFrame | None:
         """Builds a DataFrame containing the data about separate connections.
         Each row of the DataFrame represents a single connection between two stops for a given line.
         Example DataFrame may look like this:
@@ -132,7 +132,7 @@ class ConnectionsParser(FileParser):
         result_df.columns = [RESULT_COL_FROM_STOP, RESULT_COL_TO_STOP, RESULT_COL_LINES]
         return result_df
 
-    def _parse_connections_dataframe_to_dict(self, df):
+    def _parse_connections_dataframe_to_dict(self, df: pd.DataFrame | None) -> dict | None:
         """Parses the connections DataFrame to a dictionary that can be used
         as a parameter in Cypher query."""
         if df is None:

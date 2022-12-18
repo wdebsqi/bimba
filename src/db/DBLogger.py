@@ -13,7 +13,7 @@ class DBLogger:
     def __init__(self, db_connector: DBConnector):
         self.db_connector = db_connector
 
-    def log_message(self, message, file, type, with_commit=True) -> bool:
+    def log_message(self, message: str, file: str, type: str, with_commit=True) -> bool:
         """Logs a message and returns boolean value indicating if the log was successful.
         Parameters:
         - message: message to be logged
