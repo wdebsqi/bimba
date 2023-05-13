@@ -151,7 +151,7 @@ def example_raw_stop_times_df():
 @pytest.fixture(scope="module")
 def example_raw_trips_df():
     data = {
-        COL_ROUTE_ID: ["T01", "100"],
+        COL_ROUTE_ID: ["T01", 100],
         COL_SERVICE_ID: [2, 4],
         COL_TRIP_ID: ["2_2182219^+", "2_2182220^+"],
         COL_TRIP_HEADSIGN: ["OS. TEST", "TEST STREET"],

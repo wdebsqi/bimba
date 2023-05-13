@@ -77,7 +77,6 @@ class ConnectionsParser(FileParser):
             return None
 
         result_dict = {RESULT_COL_FROM_STOP: [], RESULT_COL_TO_STOP: [], RESULT_COL_LINE: []}
-        result_df = pd.DataFrame.from_dict(result_dict)
         lines_available = self.source_dataframe[COL_ROUTE_ID].unique()
 
         for line in lines_available:
@@ -90,7 +89,7 @@ class ConnectionsParser(FileParser):
                 prev_row = self.source_dataframe.iloc[idx - 1]
                 result_dict[RESULT_COL_FROM_STOP].append(prev_row[COL_STOP_ID])
                 result_dict[RESULT_COL_TO_STOP].append(row[COL_STOP_ID])
-                result_dict[RESULT_COL_LINE].append(prev_row[COL_ROUTE_ID])
+                result_dict[RESULT_COL_LINE].append(str(prev_row[COL_ROUTE_ID]))
 
         result_df = pd.DataFrame.from_dict(result_dict)
         return result_df.drop_duplicates().reset_index(drop=True)
@@ -115,7 +114,7 @@ class ConnectionsParser(FileParser):
         )
 
         for i in range(1, len(separate_connections_df.index)):
-            row_to_check = separate_connections_df.iloc[i].copy()
+            row_to_check = separate_connections_df.iloc[i].astype(object)
             rows_with_same_stops = result_df[
                 (result_df[RESULT_COL_FROM_STOP] == row_to_check[RESULT_COL_FROM_STOP])
                 & (result_df[RESULT_COL_TO_STOP] == row_to_check[RESULT_COL_TO_STOP])
@@ -130,6 +129,8 @@ class ConnectionsParser(FileParser):
                 result_df = pd.concat([result_df, row_to_check.to_frame().T])
 
         result_df.columns = [RESULT_COL_FROM_STOP, RESULT_COL_TO_STOP, RESULT_COL_LINES]
+        result_df[RESULT_COL_FROM_STOP] = result_df[RESULT_COL_FROM_STOP].astype(int)
+        result_df[RESULT_COL_TO_STOP] = result_df[RESULT_COL_TO_STOP].astype(int)
         return result_df
 
     def _parse_connections_dataframe_to_dict(self, df: pd.DataFrame | None) -> dict | None:
