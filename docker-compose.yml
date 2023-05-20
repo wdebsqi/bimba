@@ -36,3 +36,14 @@ services:
     volumes:
       - ../postgres_data/postgres:/var/lib/postgresql/data
     env_file: .env
+
+  neo4j_db:
+    image: neo4j
+    restart: on-failure
+    ports:
+      - "7474:7474"
+      - "7687:7687"
+    volumes:
+      - ../neo4j_data/data:/data
+    environment:
+      - NEO4J_AUTH=${NEO4J_AUTH}
