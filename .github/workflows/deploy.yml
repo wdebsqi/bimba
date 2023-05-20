@@ -62,4 +62,4 @@ jobs:
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.KEY }}
           passphrase: ${{ secrets.PASSPHRASE }}
-          script: cd /home/bimba && rm -rf build && tar xvf deploy.tar && cd build && docker compose down && docker rmi $(docker images -q -f reference='build-*') && docker compose up -d
+          script: cd /home/bimba && rm -rf build && tar xvf deploy.tar && cd build && docker compose down && docker rmi $(docker images -q -f reference='build_*') && docker compose up -d
