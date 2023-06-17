@@ -2,10 +2,10 @@ from datetime import datetime
 
 from sqlalchemy import Column, DateTime, Integer, String
 
-from .Base import Base
+from .Base import CRUD, Base
 
 
-class Log(Base):
+class Log(Base, CRUD):
     __tablename__ = "logs"
 
     id = Column(Integer, primary_key=True)

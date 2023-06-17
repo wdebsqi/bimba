@@ -2,10 +2,10 @@ from datetime import datetime
 
 from sqlalchemy import JSON, Column, DateTime, Integer, String
 
-from .Base import Base
+from .Base import CRUD, Base
 
 
-class Request(Base):
+class Request(Base, CRUD):
     __tablename__ = "requests"
 
     id = Column(Integer, primary_key=True)
