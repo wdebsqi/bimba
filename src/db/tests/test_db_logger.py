@@ -2,7 +2,7 @@ from ..DBLogger import DBLogger
 
 
 def test_log(logger):
-    res = logger.log_message("test message", __file__, logger.LOG_TYPE_TEST, False)
+    res = logger.log_message("test message", __file__, logger.LOG_TYPE_TEST)
     assert res is True
 
 

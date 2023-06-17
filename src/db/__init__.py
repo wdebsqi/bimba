@@ -1,5 +1,7 @@
 from dotenv import load_dotenv
 
-from .models import Log  # noqa: F401
+from .DBConnector import DBConnector
 
 load_dotenv()
+
+db_connector = DBConnector()
