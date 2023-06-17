@@ -1,6 +1,7 @@
 import pandas as pd
 import pytest
 
+from ...db.DBConnector import DBConnector
 from ..src.ConnectionsParser import (
     COL_ROUTE_ID,
     COL_STOP_ID,
@@ -12,8 +13,10 @@ from ..src.ConnectionsParser import (
     ConnectionsParser,
 )
 from ..src.FileParser import FileParser
-from ..src.SiteWatcher import SiteWatcher
+from ..src.FileProcessingLogRepository import FileProcessingLogRepository
+from ..src.FileProcessor import FileProcessor
 from ..src.StopsParser import StopsParser
+from ..src.ZtmApiHandler import ZtmApiHandler
 
 COL_ARRIVAL_TIME = "arrival_time"
 COL_BRIGADE = "brigade"
@@ -59,12 +62,31 @@ def example_raw_stops_dataframe():
     return pd.DataFrame.from_dict(data)
 
 
-# SiteWatcher configuration
+# ZtmApiHandler configuration
 
 
 @pytest.fixture(scope="module")
-def site_watcher():
-    return SiteWatcher("https://www.ztm.poznan.pl/pl/dla-deweloperow/getGTFSFile", 1)
+def db_connector():
+    return DBConnector()
+
+
+@pytest.fixture(scope="module")
+def file_processing_log_repository():
+    return FileProcessingLogRepository(DBConnector())
+
+
+@pytest.fixture(scope="module")
+def api_handler():
+    return ZtmApiHandler(
+        "https://www.ztm.poznan.pl/pl/dla-deweloperow/getGTFSFile",
+        1,
+        FileProcessingLogRepository(DBConnector()),
+    )
+
+
+@pytest.fixture(scope="module")
+def file_processor():
+    return FileProcessor()
 
 
 @pytest.fixture(scope="module")
@@ -83,6 +105,11 @@ def dummy_http_response():
             }
 
     return DummyHttpResponse()
+
+
+@pytest.fixture(scope="module")
+def ztm_http_get_response(api_handler: ZtmApiHandler):
+    return api_handler.send_request(api_handler.HTTP_GET)
 
 
 # ConnectionsParser configuration

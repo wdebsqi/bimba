@@ -1,3 +1,4 @@
+import re
 from zipfile import ZipFile
 
 import pandas as pd
@@ -16,15 +17,18 @@ class FileProcessor:
     Parameters:
     - db_logger - object for logging messages. If not provided, no messages will be logged."""
 
+    HEADER_FILENAME_KEY = "Content-Disposition"
+    HEADER_FILENAME_INNER_KEY = "filename"
+    HEADER_FILENAME_VALUE_REDUNDANT_CHARS = ['"', "="]
+
     def __init__(self, db_logger: DBLogger = None):
         self.db_logger = db_logger
 
-    def download_zip_file(self, url: str, destination_path: str) -> bool:
+    def download_zip_file(self, response: requests.Response, destination_path: str) -> bool:
         """Downloads the .zip file from the given URL and saves in in the provided destination."""
         try:
-            res = requests.get(url)
             with open(destination_path, "wb") as file:
-                file.write(res.content)
+                file.write(response.content)
             if self.db_logger:
                 self.db_logger.log_message(
                     f"Successfully downloaded file to {destination_path}",
@@ -82,3 +86,27 @@ class FileProcessor:
         df_copy = df.copy()
         df_copy.columns = columns
         return df_copy
+
+    def read_filename_from_response_header(self, response: requests.Response) -> str:
+        """Extracts filename from the provided HTTP response's header."""
+
+        header = self._extract_response_header(response, self.HEADER_FILENAME_KEY)
+        result = header.split(self.HEADER_FILENAME_INNER_KEY)[1]
+        if len(result) == 1:
+            if self.db_logger:
+                self.db_logger.log_message(
+                    f"No filename found in the header: {header}",
+                    __file__,
+                    self.db_logger.LOG_TYPE_ERROR,
+                )
+
+        pattern = ""
+        for char in self.HEADER_FILENAME_VALUE_REDUNDANT_CHARS:
+            pattern += "\\" + char
+        pattern = f"[{pattern}]"
+
+        return re.sub(pattern, "", result)
+
+    def _extract_response_header(self, response: requests.Response, header: str) -> str:
+        """Extracts the right header's value from the HTTP response."""
+        return response.headers[header]
