@@ -1,7 +1,7 @@
 from neo4j import GraphDatabase, SummaryCounters
 from neo4j.exceptions import AuthError, TransactionError
 
-from . import DBLogger
+from .DBLogger import DBLogger
 
 LABELS_ADDED = "labels_added"
 LABELS_REMOVED = "labels_removed"

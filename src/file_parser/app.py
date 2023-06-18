@@ -2,17 +2,18 @@ from datetime import datetime
 
 import pandas as pd
 
+from ..db.models import FileProcessingLog
 from ..db.models.neo4j import CommutesTo, Stop
 from . import (
     ZTM_FILES_DIRECTORY,
-    ZTM_FILES_ENDPOINT,
+    api_handler,
     connections_parser,
     db_logger,
     file_processor,
     neo4j_controller,
-    site_watcher,
     stops_parser,
 )
+from .src.FileHashHelper import FileHashHelper
 
 FILE_STOP_TIMES = "stop_times.txt"
 FILE_STOPS = "stops.txt"
@@ -26,18 +27,28 @@ while True:
 
     db_logger.log_message("Checking for new stops file", __file__, db_logger.LOG_TYPE_INFO)
 
-    response = site_watcher.query_site(site_watcher.HTTP_HEAD)
+    response = api_handler.send_request(api_handler.HTTP_GET)
 
     if not response:
-        site_watcher.sleep()
+        api_handler.sleep()
         continue
 
-    new_data_available = site_watcher.check_if_new_data_available(response)
-    filename = site_watcher.get_current_filename()
+    response_filename = file_processor.read_filename_from_response_header(response)
+    response_file_hash = FileHashHelper.hash_http_response_content_hash(response)
+
+    new_data_available = api_handler.check_if_new_data_available(
+        response_filename, response_file_hash
+    )
 
     if new_data_available:
-        filepath = f"{ZTM_FILES_DIRECTORY}{filename}"
-        file_processor.download_zip_file(ZTM_FILES_ENDPOINT, filepath)
+        new_file_processing_log = FileProcessingLog(
+            file_name=response_filename,
+            file_contents_hash=response_file_hash,
+            processed_successfully=True,
+        )
+
+        filepath = f"{ZTM_FILES_DIRECTORY}{response_filename}"
+        file_processor.download_zip_file(response, filepath)
         file_processor.unzip_file_archive(
             filepath, ZTM_FILES_DIRECTORY, [FILE_STOPS, FILE_STOP_TIMES, FILE_TRIPS]
         )
@@ -51,7 +62,10 @@ while True:
             db_logger.log_message(
                 f"Error while reading ZTM files: {e}", __file__, db_logger.LOG_TYPE_ERROR
             )
-            site_watcher.sleep()
+            new_file_processing_log.processed_successfully = False
+            new_file_processing_log.save()
+            api_handler.sleep()
+            continue
 
         # parsing stops
         query = stops_parser.parse_dataframe_to_cypher_create_query(stops_df)
@@ -75,4 +89,6 @@ while True:
                 db_logger.LOG_TYPE_INFO,
             )
 
-    site_watcher.sleep()
+        new_file_processing_log.save()
+
+    api_handler.sleep()

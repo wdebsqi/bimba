@@ -17,7 +17,7 @@ def db_connector():
 
 @pytest.fixture(scope="module")
 def db_logger():
-    return DBLogger(db_connector)
+    return DBLogger()
 
 
 @pytest.fixture(scope="module")
