@@ -30,5 +30,7 @@ neo4j_controller = Neo4jDBController(NEO4J_URL, NEO4J_USERNAME, NEO4J_PASSWORD, 
 file_processor = FileProcessor(db_logger)
 file_processing_log_repository = FileProcessingLogRepository(db_connector)
 stops_parser = StopsParser()
-api_handler = ZtmApiHandler(ZTM_FILES_ENDPOINT, API_HANDLER_WAIT_TIME, db_logger, True)
+api_handler = ZtmApiHandler(
+    ZTM_FILES_ENDPOINT, API_HANDLER_WAIT_TIME, file_processing_log_repository, True
+)
 connections_parser = ConnectionsParser(db_logger)
