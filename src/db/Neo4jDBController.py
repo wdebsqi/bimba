@@ -96,7 +96,6 @@ class Neo4jDBController:
                         f"Successfully removed {result} connections of type {connection_type}",
                         __file__,
                         self.db_logger.LOG_TYPE_INFO,
-                        with_commit=False,
                     )
                 else:
                     self.db_logger.log_message(
@@ -104,7 +103,6 @@ class Neo4jDBController:
                         Check if the connection type was correct.""",
                         __file__,
                         self.db_logger.LOG_TYPE_DEBUG,
-                        with_commit=False,
                     )
 
                 return result
@@ -115,7 +113,6 @@ class Neo4jDBController:
                 all connections of type {connection_type}""",
                 __file__,
                 self.db_logger.LOG_TYPE_ERROR,
-                with_transaction=False,
             )
 
         except Exception as e:
@@ -123,7 +120,6 @@ class Neo4jDBController:
                 f"Unidentified error when removing all connections of type {connection_type}: {e}",
                 __file__,
                 self.db_logger.LOG_TYPE_ERROR,
-                with_transaction=False,
             )
 
     @staticmethod

@@ -90,5 +90,11 @@ while True:
             )
 
         new_file_processing_log.save()
+    else:
+        db_logger.log_message(
+            "No new data available.",
+            __file__,
+            db_logger.LOG_TYPE_INFO,
+        )
 
     api_handler.sleep()
