@@ -1,5 +1,3 @@
-from datetime import datetime
-
 import pandas as pd
 
 from ..db.models import FileProcessingLog
@@ -23,8 +21,6 @@ TIMESTAMP_FORMAT = "%Y-%m-%d %H:%M:%S"
 db_logger.log_message("Starting the file_parser service", __file__, db_logger.LOG_TYPE_INFO)
 
 while True:
-    now = datetime.now().strftime(TIMESTAMP_FORMAT)
-
     db_logger.log_message("Checking for new stops file", __file__, db_logger.LOG_TYPE_INFO)
 
     response = api_handler.send_request(api_handler.HTTP_GET)
