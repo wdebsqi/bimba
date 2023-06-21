@@ -27,7 +27,7 @@ class FileProcessingLogRepository:
             query = (
                 select(FileProcessingLog)
                 .where(FileProcessingLog.processed_successfully)
-                .order_by(FileProcessingLog.created_at.desc())
+                .order_by(FileProcessingLog.created_at.desc(), FileProcessingLog.id.desc())
                 .limit(1)
             )
             return session.execute(query).scalar_one_or_none()
