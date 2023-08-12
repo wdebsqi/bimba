@@ -1,7 +1,7 @@
 from sqlalchemy import select
 
-from ...db.DBConnector import DBConnector
-from ...db.models import FileProcessingLog
+from .DBConnector import DBConnector
+from .models import FileProcessingLog
 
 
 class FileProcessingLogRepository:

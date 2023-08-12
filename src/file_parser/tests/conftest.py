@@ -2,6 +2,7 @@ import pandas as pd
 import pytest
 
 from ...db.DBConnector import DBConnector
+from ...db.FileProcessingLogRepository import FileProcessingLogRepository
 from ..src.ConnectionsParser import (
     COL_ROUTE_ID,
     COL_STOP_ID,
@@ -13,7 +14,6 @@ from ..src.ConnectionsParser import (
     ConnectionsParser,
 )
 from ..src.FileParser import FileParser
-from ..src.FileProcessingLogRepository import FileProcessingLogRepository
 from ..src.FileProcessor import FileProcessor
 from ..src.StopsParser import StopsParser
 from ..src.ZtmApiHandler import ZtmApiHandler

@@ -3,7 +3,7 @@ import os
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 
-from .src.routes import error_400, home, route_found
+from .src.routes import about, error_400, home, route_found
 
 db = SQLAlchemy()
 
@@ -18,5 +18,6 @@ def create_app():
     app.register_blueprint(home.bp)
     app.register_blueprint(route_found.bp)
     app.register_blueprint(error_400.bp)
+    app.register_blueprint(about.bp)
 
     return app

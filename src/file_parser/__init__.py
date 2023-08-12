@@ -2,9 +2,9 @@ import os
 
 from ..db.DBConnector import DBConnector
 from ..db.DBLogger import DBLogger
+from ..db.FileProcessingLogRepository import FileProcessingLogRepository
 from ..db.Neo4jDBController import Neo4jDBController
 from .src.ConnectionsParser import ConnectionsParser
-from .src.FileProcessingLogRepository import FileProcessingLogRepository
 from .src.FileProcessor import FileProcessor
 from .src.StopsParser import StopsParser
 from .src.ZtmApiHandler import ZtmApiHandler
