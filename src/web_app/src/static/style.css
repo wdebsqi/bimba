@@ -1,3 +1,4 @@
+/* base */
 .content-container {
     display: flex;
     justify-content: center;
@@ -8,11 +9,19 @@
     margin-bottom: 60px;
 }
 
+/* home */
+
+.alert.last-timetables-update {
+    font-size: 14px;
+    padding: 8px;
+    margin-top: 10px;
+}
+
 .form-container {
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-top: 50px;
+    margin-top: 20px;
     width: 75%;
 }
 
@@ -27,6 +36,7 @@
     flex-direction: row;
     justify-content: space-between;
     width: 100%;
+    max-width: 1000px;
 }
 
 .form-input {
@@ -42,6 +52,7 @@
 #form-main-submit {
     width: 40%;
     margin: auto;
+    max-width: 400px;
 }
 
 .stops-items {
@@ -70,6 +81,8 @@
     background-color: #0d6efd !important;
     color: #ffffff;
 }
+
+/* route_found */
 
 .route-container {
     display: flex;
