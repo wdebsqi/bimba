@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="about text-block">
+    <p>
+        Bimba is a simple application that will help you move between any two points
+        in the public transportation system of the Poznań agglomeration.
+    </p>
+    <p>
+        Simply tell it where you want to start and finish your journey,
+        and it will pick the best route for you.
+    </p>
+</div>
+
+<hr class="about border border-primary border-3 opacity-75">
+
+<div class="about faq text-block">
+    <h2>Frequently Asked Questions:</h2>
+
+    <h4>Where does Bimba take its data from?</h4>
+    <p>
+        Bimba uses the data <a href="https://www.ztm.poznan.pl/pl/dla-deweloperow/index" target="_blank">published</a>
+        by the City
+        Transportu Bureau in Poznań (<i>Zarząd Transportu Miejskiego w Poznaniu</i>). The data is then processed
+        by the application and stored in a graph database for the ease of access.
+    </p>
+
+    <h4>Can I contribute to the application?</h4>
+    <p>
+        Of course you can! Bimba is an open source application that can be used and modified by anyone. For more
+        information, see the <a href="https://github.com/wdebsqi/bimba/blob/main/LICENSE.md"
+            target="_blank">license</a>.
+    </p>
+
+    <h4>How can I report a bug or suggest a new feature?</h4>
+    <p>
+        You can do this by <a href="https://github.com/wdebsqi/bimba/issues" target="_blank">creating a new issue</a> on
+        the application's GitHub page.
+    </p>
+</div>
+
+
+{% endblock %}
