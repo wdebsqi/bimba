@@ -5,7 +5,7 @@ from requests import Response
 from requests.exceptions import Timeout
 
 from ...db.DBLogger import DBLogger
-from .FileProcessingLogRepository import FileProcessingLogRepository
+from ...db.FileProcessingLogRepository import FileProcessingLogRepository
 
 
 class ZtmApiHandler:
