@@ -30,6 +30,9 @@ function getStops() {
     // Gets available stops data from the REST API
 
     let HOST = window.location.href.split(':', 2).join(':')
+    if (HOST.slice(-1) == '/') {
+        HOST = HOST.slice(0, -1)
+    }
     let REST_API_PORT = '5001'
 
     let options = {
