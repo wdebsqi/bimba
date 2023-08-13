@@ -1,4 +1,13 @@
 services:  
+  web_app:
+    build:
+      context: ./src/
+      dockerfile: web_app/Dockerfile
+    restart: on-failure
+    ports:
+      - "80:80"
+    env_file: .env
+
   file_parser:
     build:
       context: ./src/
@@ -17,15 +26,6 @@ services:
     restart: on-failure
     ports:
       - "5001:5001"
-    env_file: .env
-  
-  web_app:
-    build:
-      context: ./src/
-      dockerfile: web_app/Dockerfile
-    restart: on-failure
-    ports:
-      - "5002:5002"
     env_file: .env
 
   db:

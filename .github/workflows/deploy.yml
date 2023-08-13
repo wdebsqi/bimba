@@ -70,5 +70,5 @@ jobs:
             tar xvf deploy.tar
             cd build
             docker compose down
-            docker rmi $(docker images -q -f reference='build_*')
+            docker rmi $(docker images -q -f reference='build-*')
             docker compose up -d
