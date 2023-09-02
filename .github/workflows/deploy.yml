@@ -19,6 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: production
+      url: http://bimba.wdebsqi.pl/
 
     steps:
       - uses: actions/checkout@v3
