@@ -46,4 +46,4 @@ services:
     volumes:
       - ../neo4j_data/data:/data
     environment:
-      - NEO4J_AUTH=${NEO4J_AUTH}
+      - .env
